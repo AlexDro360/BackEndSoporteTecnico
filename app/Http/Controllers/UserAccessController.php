@@ -36,7 +36,8 @@ class UserAccessController extends Controller
                     'type_document'=> $user->type_document ,
                     'n_document'=> $user->n_document,
                     'gender'=>$user->gender ,
-                    'avatar'=> $user->avatar ? env("APP_URL")."storage/".$user->avatar : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
+                    //'avatar'=> $user->avatar ? env("APP_URL")."storage/".$user->avatar : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
+                    'avatar' => $user->avatar ? asset("storage/" . $user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                     'created_format_at' => $user->created_at->format("Y-m-d h:i A"),
                 ];
             }),
@@ -63,7 +64,7 @@ class UserAccessController extends Controller
             ]);
         }
 
-        if($request->hasFile("image")){
+        if($request->hasFile("imagen")){
             $path = Storage::putFile("users", $request->file("imagen"));
             $request->request->add(["avatar" => $path]);
         }
@@ -93,7 +94,7 @@ class UserAccessController extends Controller
                 'type_document'=> $user->type_document ,
                 'n_document'=> $user->n_document,
                 'gender'=>$user->gender ,
-                'avatar'=> $user->avatar ? env("APP_URL")."storage/".$user->avatar : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
+                'avatar' => $user->avatar ? asset("storage/" . $user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                 'created_format_at' => $user->created_at->format("Y-m-d h:i A"),
             ]
         ]);
@@ -123,7 +124,7 @@ class UserAccessController extends Controller
 
         $user = User::findOrFail($id);
 
-        if($request->hasFile("image")){
+        if($request->hasFile("imagen")){
             if($user->avatar){
                 Storage::delete($user->avatar);
             }
@@ -179,7 +180,7 @@ class UserAccessController extends Controller
             Storage::delete($user->avatar);
         }
         $user->delete();
-        return respose()->json([
+        return response()->json([
             "message" => 200,
         ]);
     }
