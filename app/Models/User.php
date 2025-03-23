@@ -31,6 +31,7 @@ class User extends Authenticatable implements JWTSubject
         'sucursal_id',
         'type_document',
         'n_document',
+        'address',
         'gender',
         'avatar'
     ];

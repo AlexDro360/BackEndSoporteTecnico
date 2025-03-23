@@ -38,7 +38,7 @@ Route::group([
     'middleware' => 'auth:api',
 ], function ($router) {
     Route::resource("roles",RolePermissionController::class);
-    Route::post('/user/{id}', [UserAccessController::class, 'update']);
+    Route::post('/users/{id}', [UserAccessController::class, 'update']);
     Route::get("users/config", [UserAccessController::class, 'config']);
     Route::resource("users",UserAccessController::class);
 });
