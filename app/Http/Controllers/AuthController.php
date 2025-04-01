@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use Validator;
 
 class AuthController extends Controller
@@ -69,11 +70,39 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function me()
-    {
-        return response()->json(auth('api')->user());
-    }
+
+    /**
+    *public function me()
+    *{
+    *    return response()->json(auth('api')->user());
+    *}
+    */
  
+    public function me() 
+{
+    $user = auth('api')->user();
+
+    if (!$user) {
+        return response()->json(['error' => 'No autenticado'], 401);
+    }
+
+    // Buscar el nombre del rol usando el role_id
+    $roleName = Role::find($user->role_id)?->name ?? 'Sin rol';
+
+    return response()->json([
+        'id' => $user->id,
+        'email'=> $user->email,
+        'full_name' => $user->name . ' ' . $user->surname,
+        'phone'=> $user->phone,
+        'role_name' => $roleName,
+        'departamento_id'=> $user->departamento ? $user->departamento->nombre : 'Sin departamento',
+        'num_empleado'=> $user->num_empleado,
+        'avatar' => $user->avatar ? asset("storage/" . $user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
+        'created_format_at' => $user->created_at->format("Y-m-d h:i A"),
+    ]);
+}
+
+
     /**
      * Log the user out (Invalidate the token).
      *
