@@ -17,7 +17,12 @@ class UserAccessController extends Controller
     {
         $search = $request->get("search");
 
-        $users = User::where("name","like","%".$search."%")->orderBy("id","desc")->paginate(25);
+        // $users = User::where("name","like","%".$search."%")->orderBy("id","desc")->paginate(25);
+        // $nombreDepartamento = $users->departamento ? $users->departamento->nombre : 'Sin departamento';
+        $users = User::with('departamento')
+        ->where("name", "like", "%" . $search . "%")
+        ->orderBy("id", "desc")
+        ->paginate(25);
 
         return response()->json([
             "total" => $users->total(),
@@ -32,11 +37,8 @@ class UserAccessController extends Controller
                     'role_id'=> $user->role_id,
                     'role'=> $user->role,
                     'roles'=> $user->roles,
-                    'sucursal_id'=> $user->sucursal_id,
-                    'type_document'=> $user->type_document ,
-                    'n_document'=> $user->n_document,
-                    'address' => $user->address,
-                    'gender'=>$user->gender ,
+                    'departamento_id'=>  $user->departamento ? $user->departamento->nombre : 'Sin departamento',
+                    'num_empleado'=> $user->num_empleado,
                     //'avatar'=> $user->avatar ? env("APP_URL")."storage/".$user->avatar : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                     'avatar' => $user->avatar ? asset("storage/" . $user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                     'created_format_at' => $user->created_at->format("Y-m-d h:i A"),
@@ -78,6 +80,7 @@ class UserAccessController extends Controller
         $user = User::create($request->all());
         $user->assignRole($role);
 
+        $user->load('departamento');
 
         return response()->json([
             "message" => 200,
@@ -91,11 +94,8 @@ class UserAccessController extends Controller
                 'role_id'=> $user->role_id,
                 'role'=> $user->role,
                 'roles'=> $user->roles,
-                'sucursal_id'=> $user->sucursal_id,
-                'type_document'=> $user->type_document ,
-                'n_document'=> $user->n_document,
-                'address' => $user->address,
-                'gender'=>$user->gender ,
+                'departamento_id'=> $user->departamento ? $user->departamento->nombre : 'Sin departamento',
+                'num_empleado'=> $user->num_empleado,
                 'avatar' => $user->avatar ? asset("storage/" . $user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                 'created_format_at' => $user->created_at->format("Y-m-d h:i A"),
             ]
@@ -147,9 +147,10 @@ class UserAccessController extends Controller
             $role = Role::findOrFail($request->role_id);
             $user->assignRole($role);
         }
+        $user->load('departamento');
 
         $user->update($request->all());
-
+        
         return response()->json([
             "message" => 200,
             "user" => [
@@ -162,10 +163,8 @@ class UserAccessController extends Controller
                 'role_id'=> $user->role_id,
                 'role'=> $user->role,
                 'roles'=> $user->roles,
-                'sucursal_id'=> $user->sucursal_id,
-                'type_document'=> $user->type_document ,
-                'n_document'=> $user->n_document,
-                'gender'=>$user->gender ,
+                'departamento_id'=> $user->departamento ? $user->departamento->nombre : 'Sin departamento',
+                'num_empleado'=> $user->num_empleado,
                 'avatar'=> $user->avatar ? env("APP_URL")."storage/".$user->avatar : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                 'created_format_at' => $user->created_at->format("Y-m-d h:i A"),
             ]

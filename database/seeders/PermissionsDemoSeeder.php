@@ -74,6 +74,7 @@ class PermissionsDemoSeeder extends Seeder
         // $role2->givePermissionTo('unpublish articles');
 
         $role3 = Role::create(['guard_name' => 'api','name' => 'Super-Admin']);
+        Role::create(['guard_name' => 'api','name' => 'Jefe de Departamento']);
         // gets all permissions via Gate::before rule; see AuthServiceProvider
 
         // create demo users
@@ -95,6 +96,8 @@ class PermissionsDemoSeeder extends Seeder
             'name' => 'Super Admin',
             'email' => 'super_admin_crm@gmail.com',
             'password' => bcrypt("12345678"),
+            'role_id' => '1',
+            'departamento_id'=>1,
         ]);
         $user->assignRole($role3);
     }

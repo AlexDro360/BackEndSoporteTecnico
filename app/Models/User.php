@@ -28,11 +28,8 @@ class User extends Authenticatable implements JWTSubject
         'surname',
         'phone',
         'role_id',
-        'sucursal_id',
-        'type_document',
-        'n_document',
-        'address',
-        'gender',
+        'departamento_id',
+        'num_empleado',
         'avatar'
     ];
 
@@ -78,5 +75,10 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class);
     }
 }

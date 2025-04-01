@@ -18,11 +18,8 @@ return new class extends Migration
             $table->string('email',100)->unique();
             $table->string('phone',25)->nullable();
             $table->bigInteger('role_id')->nullable();
-            $table->bigInteger('sucursal_id')->nullable();
-            $table->string('n_document',35)->nullable();
-            $table->string('type_document',25)->nullable();
-            $table->string('address',250)->nullable();
-            $table->string('gender',15)->nullable();
+            $table->foreignId('departamento_id')->constrained()->onDelete('cascade')->nullable();
+            $table->string('num_empleado',35)->nullable();
             $table->string('avatar',250)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserAccessController;
+use App\Http\Controllers\DepartamentoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,3 +43,4 @@ Route::group([
     Route::get("users/config", [UserAccessController::class, 'config']);
     Route::resource("users",UserAccessController::class);
 });
+Route::get('departamentos','App\Http\Controllers\DepartamentoController@index');
