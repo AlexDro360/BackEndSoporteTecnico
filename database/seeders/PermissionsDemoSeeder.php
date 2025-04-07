@@ -98,6 +98,7 @@ class PermissionsDemoSeeder extends Seeder
             'password' => bcrypt("12345678"),
             'role_id' => '1',
             'departamento_id'=>1,
+            'status' => true,
         ]);
         $user->assignRole($role3);
     }

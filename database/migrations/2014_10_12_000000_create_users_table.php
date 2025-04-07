@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignId('departamento_id')->constrained()->onDelete('cascade')->nullable();
             $table->string('num_empleado',35)->nullable();
             $table->string('avatar',250)->nullable();
+            $table->boolean('status')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
