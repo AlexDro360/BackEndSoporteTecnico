@@ -6,6 +6,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserAccessController;
 use App\Http\Controllers\DepartamentoController;
+use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\TipoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,5 +45,12 @@ Route::group([
     Route::post('/users/{id}', [UserAccessController::class, 'update']);
     Route::get("users/config", [UserAccessController::class, 'config']);
     Route::resource("users",UserAccessController::class);
+
+    Route::post('/solicitudes/{id}', [UserAccessController::class, 'update']);
+
 });
+
+Route::resource("solicitudes",SolicitudController::class);
+Route::resource("estados",EstadoController::class);
+Route::resource("tipos",TipoController::class);
 Route::get('departamentos','App\Http\Controllers\DepartamentoController@index');
