@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Auth\AuthenticationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +27,20 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        if ($request->expectsJson()) {
+            return response()->json([
+                'error' => 'Unauthenticated',
+                'message' => 'No se ha proporcionado un token válido o ha expirado.',
+            ], 401);
+        }
+
+        return response()->json([
+            'error' => 'Unauthenticated',
+            'message' => 'No se ha proporcionado un token válido o ha expirado.',
+        ], 401);
     }
 }

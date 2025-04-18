@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\TipoMantenimiento;
+use App\Models\TipoServicio;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -24,6 +27,8 @@ class DatabaseSeeder extends Seeder
             PermissionsDemoSeeder::class,
             EstadoSeeder::class,
             TipoSeeder::class,
+            TipoMantenimiento::class,
+            TipoServicio::class,
         ]);
     }
 }

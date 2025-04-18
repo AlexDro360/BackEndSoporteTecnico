@@ -38,4 +38,21 @@ class Solicitud extends Model
     {
         return $this->belongsTo(Tipo::class, 'idTipo');
     }
+
+    
+
+    public function bitacora()
+    {
+        return $this->hasOne(Bitacora::class);
+    }
+
+    public function respuesta()
+    {
+        return $this->hasOne(Respuesta::class);
+    }
+
+    public function personalAntencion()
+    {
+        return $this->belongsToMany(User::class, 'atencion_solicituds');
+    }
 }
