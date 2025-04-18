@@ -14,11 +14,12 @@ class Solicitud extends Model
     protected $fillable = [
         'idUser',
         'descripcionUser',
+        'fechaAsignacion',
         'fechaRevision',
         'descripcionFalla',
         'fechaSolucion',
         'descripcionSolucion',
-        'materialRequerido',
+        'descripcionRechazo',
         'idTipo',
         'idEstado',
     ];

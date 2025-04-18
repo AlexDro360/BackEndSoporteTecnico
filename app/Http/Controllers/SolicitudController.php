@@ -12,7 +12,7 @@ class SolicitudController extends Controller
     {
         $search = $request->get("search");
 
-        $solicitudes = Solicitud::with('user') 
+        $solicitudes = Solicitud::with('user')
             ->where("idUser", "like", "%" . $search . "%")
             ->orderBy("id", "desc")
             ->paginate(25);
@@ -40,11 +40,12 @@ class SolicitudController extends Controller
                     ] : null,
                     'id' => $solicitud->id,
                     'descripcionUser' => $solicitud->descripcionUser,
+                    'fechaAsignacion' => $solicitud->fechaAsignacion,
                     'fechaRevision' => $solicitud->fechaRevision,
                     'descripcionFalla' => $solicitud->descripcionFalla,
                     'fechaSolucion' => $solicitud->fechaSolucion,
                     'descripcionSolucion' => $solicitud->descripcionSolucion,
-                    'materialRequerido' => $solicitud->materialRequerido,
+                    'descripcionRechazo' => $solicitud->descripcionRechazo,
                     'idTipo' => $solicitud->idTipo,
                     'idEstado' => $solicitud->idEstado,
                     'created_format_at' => $solicitud->created_at->format("Y-m-d h:i A"),
@@ -62,20 +63,42 @@ class SolicitudController extends Controller
      */
     public function store(Request $request)
     {
+        $request->request->add(["idEstado" => 1]);
         $solicitud = Solicitud::create($request->all());
 
+        $solicitud->load('user.departamento', 'estado', 'tipo');
+
         return response()->json([
-            "message" => 200,
-            "solicitud" => [
-                'idUser' => $solicitud->idUser,
+            'solicitud' => [
+                'user' => $solicitud->user ? [
+                    'id' => $solicitud->user->id,
+                    'full_name' => $solicitud->user->name . ' ' . $solicitud->user->surname,
+                    'email' => $solicitud->user->email,
+                    'phone' => $solicitud->user->phone,
+                    'departamento' => $solicitud->user->departamento ? $solicitud->user->departamento->nombre : 'Sin departamento',
+                    'num_empleado' => $solicitud->user->num_empleado,
+                    'avatar' => $solicitud->user->avatar ? asset("storage/" . $solicitud->user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
+                ] : null,
+                'estado' => $solicitud->estado ? [
+                    'id' => $solicitud->estado->id,
+                    'nombre' => $solicitud->estado->nombre,
+                ] : null,
+                'tipo' => $solicitud->tipo ? [
+                    'id' => $solicitud->tipo->id,
+                    'nombre' => $solicitud->tipo->nombre,
+                ] : null,
+                'id' => $solicitud->id,
                 'descripcionUser' => $solicitud->descripcionUser,
+                'fechaAsignacion' => $solicitud->fechaAsignacion,
                 'fechaRevision' => $solicitud->fechaRevision,
                 'descripcionFalla' => $solicitud->descripcionFalla,
                 'fechaSolucion' => $solicitud->fechaSolucion,
                 'descripcionSolucion' => $solicitud->descripcionSolucion,
-                'materialRequerido' => $solicitud->materialRequerido,
+                'descripcionRechazo' => $solicitud->descripcionRechazo,
                 'idTipo' => $solicitud->idTipo,
                 'idEstado' => $solicitud->idEstado,
+                'created_format_at' => $solicitud->created_at->format("Y-m-d h:i A"),
+                'updated_format_at' => $solicitud->updated_at->format("Y-m-d h:i A"),
             ]
         ]);
     }
@@ -116,7 +139,7 @@ class SolicitudController extends Controller
     {
         $solicitud = Solicitud::findOrFail($id);
 
-        $solicitud->update(['status' => 0]);
+        $solicitud->update(['idEstado' => 5]);
 
         return response()->json([
             "message" => 200,

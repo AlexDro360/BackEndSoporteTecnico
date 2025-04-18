@@ -12,7 +12,7 @@ class TipoController extends Controller
         $tipos = Tipo::all();
 
         return response()->json([
-            "estados" => $tipos->map(function ($tipo) {
+            "tipos" => $tipos->map(function ($tipo) {
                 return [
                     "id" => $tipo->id,
                     'nombre' => $tipo->nombre,
