@@ -6,6 +6,8 @@ use App\Models\Respuesta;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Barryvdh\DomPDF\PDF as DomPDFPDF;
 
 class RespuestaController extends Controller
 {
@@ -126,5 +128,14 @@ class RespuestaController extends Controller
         }
         $respuesta->delete();
         return response()->json(['message' => 'Respuesta eliminada correctamente'], 200);
+    }
+
+    public function generarPDF($id) {
+        $respuesta = Respuesta::with('tipoServicio','tipoMantenimiento', 'solicitud.user.departamento')->find($id);
+        if (!$respuesta) {
+            return response()->json(['message' => 'No se encontro la Respuesta'], 404);
+        }
+        $pdf = PDF::loadView('respuesta',['respuesta'=>$respuesta]);
+        return $pdf->stream();
     }
 }

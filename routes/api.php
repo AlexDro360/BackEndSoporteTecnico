@@ -72,6 +72,8 @@ Route::group([
     Route::post('/agregar', [RespuestaController::class, 'store']);
     Route::put('/editar/{id}', [RespuestaController::class, 'update']);
     Route::delete('/borrar/{id}', [RespuestaController::class, 'destroy']);
+    
+    
 });
 
 Route::resource("solicitudes", SolicitudController::class);
@@ -80,3 +82,5 @@ Route::resource("tipos", TipoController::class);
 Route::get('tipomantenimientos', [TipoMantenimientoController::class, 'index']);
 Route::get('tiposervicios', [TipoServicioController::class, 'index']);
 Route::get('departamentos', 'App\Http\Controllers\DepartamentoController@index');
+Route::get('/pdf/{id}', [RespuestaController::class, 'generarPDF']);
+
