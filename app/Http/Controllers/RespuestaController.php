@@ -14,9 +14,9 @@ class RespuestaController extends Controller
         $perPage = $request->input('per_page', 10);
 
         $respuestas = Respuesta::with('tipoServicio', 'tipoMantenimiento', 'solicitud')->paginate($perPage);
-        if ($respuestas->isEmpty()) {
-            return response()->json(['message' => 'No hay respuestas'], 404);
-        }
+        // if ($respuestas->isEmpty()) {
+        //     return response()->json(['message' => 'No hay respuestas'], 404);
+        // }
         return response()->json($respuestas, 200);
     }
 
@@ -40,7 +40,7 @@ class RespuestaController extends Controller
 
         ]);
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
+            return response()->json( $validator->errors(), 422);
         }
 
         $data = $validator->validated();

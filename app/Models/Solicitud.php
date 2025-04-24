@@ -43,12 +43,12 @@ class Solicitud extends Model
 
     public function bitacora()
     {
-        return $this->hasOne(Bitacora::class);
+        return $this->hasOne(Bitacora::class, 'idSolicitud');
     }
 
     public function respuesta()
     {
-        return $this->hasOne(Respuesta::class);
+        return $this->hasOne(Respuesta::class, 'idSolicitud');
     }
 
     public function personalAntencion()

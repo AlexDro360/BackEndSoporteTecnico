@@ -18,6 +18,6 @@ class Bitacora extends Model
     ];
 
     public function solicitud(){
-        return $this->belongsTo(Solicitud::class);
+        return $this->belongsTo(Solicitud::class, 'idSolicitud');
     }
 }

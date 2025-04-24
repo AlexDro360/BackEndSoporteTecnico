@@ -19,16 +19,16 @@ class Respuesta extends Model
     ];
 
     public function tipoServicio(){
-        return $this->belongsTo(TipoServicio::class);
+        return $this->belongsTo(TipoServicio::class, 'idTipoServicio');
     }
     
     public function tipoMantenimiento()
     {
-        return $this->belongsTo(TipoMantenimiento::class);
+        return $this->belongsTo(TipoMantenimiento::class, 'idTipoMantenimiento');
     }
 
     public function solicitud()
     {
-        return $this->belongsTo(Solicitud::class);
+        return $this->belongsTo(Solicitud::class, 'idSolicitud');
     }
 }

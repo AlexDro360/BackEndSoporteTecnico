@@ -16,6 +16,6 @@ class TipoMantenimiento extends Model
 
     public function respuestas()
     {
-        return $this->hasMany(Respuesta::class);
+        return $this->hasMany(Respuesta::class, 'idTipoMantenimiento');
     }
 }
