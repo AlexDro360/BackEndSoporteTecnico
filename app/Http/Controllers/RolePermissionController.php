@@ -12,6 +12,8 @@ class RolePermissionController extends Controller
      */
     public function index(Request $request)
     {
+        //$this->authorize('viewAny', Role::class);
+
         $search = $request->get("search");
 
         $roles = Role::with(["permissions"])->where("name","like","%".$search."%")->orderBy("id","desc")->paginate(25);
@@ -31,7 +33,7 @@ class RolePermissionController extends Controller
      */
     public function store(Request $request)
     {
-        
+        //$this->authorize('create', Role::class);
         $IS_ROLE = Role::where("name", $request->name)->first();
         if($IS_ROLE){
             return response()->json([
@@ -73,6 +75,7 @@ class RolePermissionController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        //$this->authorize('update', Role::class);
         $IS_ROLE = Role::where("name", $request->name)->where("id","<>",$id)->first();
         if($IS_ROLE){
             return response()->json([
@@ -102,8 +105,11 @@ class RolePermissionController extends Controller
      */
     public function destroy(string $id)
     {
+        //Ocupe las politicas de los roles
+        //$this->authorize('delete', Role::class);
+        
         $role = Role::findOrFail($id);
-        //la validacion por usuario
+
         $role->delete();
 
         return response()->json([

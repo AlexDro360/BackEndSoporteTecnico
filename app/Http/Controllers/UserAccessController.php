@@ -15,6 +15,7 @@ class UserAccessController extends Controller
      */
     public function index(Request $request)
     {
+        //$this->authorize('viewAny', User::class);
         $search = $request->get("search");
 
         // $users = User::where("name","like","%".$search."%")->orderBy("id","desc")->paginate(25);
@@ -61,6 +62,7 @@ class UserAccessController extends Controller
      */
     public function store(Request $request)
     {
+        //$this->authorize('create', User::class);
         $USER_EXITS = User::where("email", $request->email)->first();
         if ($USER_EXITS) {
             return response()->json([
@@ -119,6 +121,7 @@ class UserAccessController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        //$this->authorize('update', User::class);
         $USER_EXITS = User::where("email", $request->email)
             ->where("id", "<>", $id)->first();
         if ($USER_EXITS) {
@@ -180,6 +183,7 @@ class UserAccessController extends Controller
      */
     public function destroy(Request $request,string $id)
     {
+        //$this->authorize('delete', User::class);
         $user = User::findOrFail($id);
 
         $user->update(['status' => 0]);

@@ -20,50 +20,26 @@ class PermissionsDemoSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create permissions
-        Permission::create(['guard_name' => 'api','name' => 'register_role']);
-        Permission::create(['guard_name' => 'api','name' => 'edit_role']);
-        Permission::create(['guard_name' => 'api','name' => 'delete_role']);
-        Permission::create(['guard_name' => 'api','name' => 'register_user']);
+        Permission::create(['guard_name' => 'api', 'name' => 'view_role']);
+        Permission::create(['guard_name' => 'api', 'name' => 'register_role']);
+        Permission::create(['guard_name' => 'api', 'name' => 'edit_role']);
+        Permission::create(['guard_name' => 'api', 'name' => 'delete_role']);
 
-        Permission::create(['guard_name' => 'api','name' => 'edit_user']);
-        Permission::create(['guard_name' => 'api','name' => 'delete_user']);
-        Permission::create(['guard_name' => 'api','name' => 'register_product']);
-        Permission::create(['guard_name' => 'api','name' => 'edit_product']);
+        Permission::create(['guard_name' => 'api', 'name' => 'view_user']);
+        Permission::create(['guard_name' => 'api', 'name' => 'register_user']);
+        Permission::create(['guard_name' => 'api', 'name' => 'edit_user']);
+        Permission::create(['guard_name' => 'api', 'name' => 'delete_user']);
 
-        Permission::create(['guard_name' => 'api','name' => 'delete_product']);
-        Permission::create(['guard_name' => 'api','name' => 'show_wallet_price_product']);
-        Permission::create(['guard_name' => 'api','name' => 'register_wallet_price_product']);
-        Permission::create(['guard_name' => 'api','name' => 'edit_wallet_price_product']);
+        Permission::create(['guard_name' => 'api', 'name' => 'view_solicitud']);
+        Permission::create(['guard_name' => 'api', 'name' => 'register_solicitud']);
+        Permission::create(['guard_name' => 'api', 'name' => 'edit_solicitud']);
+        Permission::create(['guard_name' => 'api', 'name' => 'delete_solicitud']);
 
-        Permission::create(['guard_name' => 'api','name' => 'delete_wallet_price_product']);
-        Permission::create(['guard_name' => 'api','name' => 'register_clientes']);
-        Permission::create(['guard_name' => 'api','name' => 'edit_clientes']);
-        Permission::create(['guard_name' => 'api','name' => 'delete_clientes']);
+        Permission::create(['guard_name' => 'api', 'name' => 'view_response']);
+        Permission::create(['guard_name' => 'api', 'name' => 'register_response']);
+        Permission::create(['guard_name' => 'api', 'name' => 'edit_response']);
+        Permission::create(['guard_name' => 'api', 'name' => 'delete_response']);
 
-        Permission::create(['guard_name' => 'api','name' => 'valid_payments']);
-        Permission::create(['guard_name' => 'api','name' => 'reports_caja']);
-        Permission::create(['guard_name' => 'api','name' => 'record_contract_process']);
-        Permission::create(['guard_name' => 'api','name' => 'egreso']);
-
-        Permission::create(['guard_name' => 'api','name' => 'ingreso']);
-        Permission::create(['guard_name' => 'api','name' => 'close_caja']);
-        Permission::create(['guard_name' => 'api','name' => 'register_proforma']);
-        Permission::create(['guard_name' => 'api','name' => 'edit_proforma']);
-
-        Permission::create(['guard_name' => 'api','name' => 'delete_proforma']);
-        Permission::create(['guard_name' => 'api','name' => 'cronograma']);
-        Permission::create(['guard_name' => 'api','name' => 'comisiones']);
-        Permission::create(['guard_name' => 'api','name' => 'register_compra']);
-
-        Permission::create(['guard_name' => 'api','name' => 'edit_compra']);
-        Permission::create(['guard_name' => 'api','name' => 'delete_compra']);
-        Permission::create(['guard_name' => 'api','name' => 'register_transporte']);
-        Permission::create(['guard_name' => 'api','name' => 'edit_transporte']);
-
-        Permission::create(['guard_name' => 'api','name' => 'delete_transporte']);
-        Permission::create(['guard_name' => 'api','name' => 'despacho']);
-        Permission::create(['guard_name' => 'api','name' => 'movimientos']);
-        Permission::create(['guard_name' => 'api','name' => 'kardex']);
         // create roles and assign existing permissions
         // $role1 = Role::create(['guard_name' => 'api','name' => 'writer']);
         // $role1->givePermissionTo('edit articles');
@@ -73,8 +49,15 @@ class PermissionsDemoSeeder extends Seeder
         // $role2->givePermissionTo('publish articles');
         // $role2->givePermissionTo('unpublish articles');
 
-        $role3 = Role::create(['guard_name' => 'api','name' => 'Super-Admin']);
-        Role::create(['guard_name' => 'api','name' => 'Jefe de Departamento']);
+        $role3 = Role::create(['guard_name' => 'api', 'name' => 'Super-Admin']);
+
+        $rolePruebas = Role::create(['guard_name' => 'api', 'name' => 'Pruebas']);
+        $rolePruebas->givePermissionTo([
+            'view_user',
+            'register_user',
+            'edit_user',
+            'delete_user',
+        ]);
         // gets all permissions via Gate::before rule; see AuthServiceProvider
 
         // create demo users
@@ -97,9 +80,21 @@ class PermissionsDemoSeeder extends Seeder
             'email' => 'super_admin_crm@gmail.com',
             'password' => bcrypt("12345678"),
             'role_id' => '1',
-            'departamento_id'=>1,
+            'departamento_id' => 1,
             'status' => true,
         ]);
         $user->assignRole($role3);
+
+
+        $user = \App\Models\User::factory()->create([
+            'name' => 'Benito Camelo',
+            'surname' => 'Hernandez',
+            'email' => 'benito@gmail.com',
+            'password' => bcrypt("12345678"),
+            'role_id' => '1',
+            'departamento_id' => 10,
+            'status' => true,
+        ]);
+        $user->assignRole($rolePruebas);
     }
 }

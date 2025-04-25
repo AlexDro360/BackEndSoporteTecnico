@@ -20,35 +20,36 @@ class AuthController extends Controller
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
- 
- 
+
+
     /**
      * Register a User.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register() {
+    public function register()
+    {
         //$this->authorize("create",User::class);
         $validator = Validator::make(request()->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
         ]);
- 
-        if($validator->fails()){
+
+        if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
- 
+
         $user = new User;
         $user->name = request()->name;
         $user->email = request()->email;
         $user->password = bcrypt(request()->password);
         $user->save();
- 
+
         return response()->json($user, 201);
     }
- 
- 
+
+
     /**
      * Get a JWT via given credentials.
      *
@@ -57,14 +58,14 @@ class AuthController extends Controller
     public function login()
     {
         $credentials = request(['email', 'password']);
- 
+
         if (! $token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
- 
+
         return $this->respondWithToken($token);
     }
- 
+
     /**
      * Get the authenticated User.
      *
@@ -72,36 +73,36 @@ class AuthController extends Controller
      */
 
     /**
-    *public function me()
-    *{
-    *    return response()->json(auth('api')->user());
-    *}
-    */
- 
-    public function me() 
-{
-    $user = auth('api')->user();
+     *public function me()
+     *{
+     *    return response()->json(auth('api')->user());
+     *}
+     */
 
-    if (!$user) {
-        return response()->json(['error' => 'No autenticado'], 401);
+    public function me()
+    {
+        $user = auth('api')->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'No autenticado'], 401);
+        }
+
+        // Buscar el nombre del rol usando el role_id
+        $roleName = Role::find($user->role_id)?->name ?? 'Sin rol';
+
+        return response()->json([
+            'id' => $user->id,
+            'email' => $user->email,
+            'full_name' => $user->name . ' ' . $user->surname,
+            'phone' => $user->phone,
+            'role_name' => $roleName,
+            'departamento_id' => $user->departamento,
+            'departamento' => $user->departamento ? $user->departamento->nombre : 'Sin departamento',
+            'num_empleado' => $user->num_empleado,
+            'avatar' => $user->avatar ? asset("storage/" . $user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
+            'created_format_at' => $user->created_at->format("Y-m-d h:i A"),
+        ]);
     }
-
-    // Buscar el nombre del rol usando el role_id
-    $roleName = Role::find($user->role_id)?->name ?? 'Sin rol';
-
-    return response()->json([
-        'id' => $user->id,
-        'email'=> $user->email,
-        'full_name' => $user->name . ' ' . $user->surname,
-        'phone'=> $user->phone,
-        'role_name' => $roleName,
-        'departamento_id'=> $user->departamento,
-        'departamento'=> $user->departamento ? $user->departamento->nombre : 'Sin departamento',
-        'num_empleado'=> $user->num_empleado,
-        'avatar' => $user->avatar ? asset("storage/" . $user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
-        'created_format_at' => $user->created_at->format("Y-m-d h:i A"),
-    ]);
-}
 
 
     /**
@@ -112,10 +113,10 @@ class AuthController extends Controller
     public function logout()
     {
         auth('api')->logout();
- 
+
         return response()->json(['message' => 'Successfully logged out']);
     }
- 
+
     /**
      * Refresh a token.
      *
@@ -125,7 +126,7 @@ class AuthController extends Controller
     {
         return $this->respondWithToken(auth('api')->refresh());
     }
- 
+
     /**
      * Get the token array structure.
      *
@@ -135,14 +136,23 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        $permissions = auth("api")->user()->getAllPermissions()->map(function ($perm) {
+            return $perm->name;
+        });
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60,
             'user' => [
-                "full_names" => auth("api")->user()->name.''.auth("api")->user()->surname,
+                "full_names" => auth("api")->user()->name . '' . auth("api")->user()->surname,
                 "email" => auth("api")->user()->email,
-                // "avatar"
+                'avatar' => auth("api")->user()->avatar
+                    ? env("APP_URL") . "/storage/" . auth("api")->user()->avatar
+                    : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
+                'role_name' => auth("api")->user()->role->name,
+                'permissions' => $permissions,
+                'status' => auth("api")->user()->status,
+                'role_id' => auth("api")->user()->role_id,
             ]
         ]);
     }
