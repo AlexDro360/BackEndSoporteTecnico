@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AtencionSolicitudController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -74,6 +75,17 @@ Route::group([
     Route::delete('/borrar/{id}', [RespuestaController::class, 'destroy']);
     
     
+});
+
+
+Route::group([
+    'prefix' => 'atencion_solicitud',
+    'middleware' => 'auth:api',
+], function ($router) {
+    Route::get('tecnicos/', [AtencionSolicitudController::class, 'tecnicos']);
+    Route::post('/asignar/{id}', [AtencionSolicitudController::class, 'asignarTecnicos']);
+    Route::put('/editar/{id}', [AtencionSolicitudController::class, 'update']);
+    Route::delete('/borrar/{id}', [AtencionSolicitudController::class, 'destroy']);
 });
 
 Route::resource("solicitudes", SolicitudController::class);
