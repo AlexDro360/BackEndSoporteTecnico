@@ -88,7 +88,8 @@ class PermissionsDemoSeeder extends Seeder
 
         $user = \App\Models\User::factory()->create([
             'name' => 'Benito Camelo',
-            'surname' => 'Hernandez',
+            'surnameP' => 'Hernandez',
+            'surnameM' => 'Hernandez',
             'email' => 'benito@gmail.com',
             'password' => bcrypt("12345678"),
             'role_id' => '1',
