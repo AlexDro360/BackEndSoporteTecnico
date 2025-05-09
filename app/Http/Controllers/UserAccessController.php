@@ -15,15 +15,15 @@ class UserAccessController extends Controller
      */
     public function index(Request $request)
     {
-        //$this->authorize('viewAny', User::class);
+        $this->authorize('viewAny', User::class);
         $search = $request->get("search");
 
-        // $users = User::where("name","like","%".$search."%")->orderBy("id","desc")->paginate(25);
+        //$users = User::where("name","like","%".$search."%")->orderBy("id","desc")->paginate(25);
         // $nombreDepartamento = $users->departamento ? $users->departamento->nombre : 'Sin departamento';
-        $users = User::with('departamento')
-            ->where("name", "like", "%" . $search . "%")
-            ->orderBy("id", "desc")
-            ->paginate(25);
+        //$users = User::with('departamento')->where("name", "like", "%" . $search . "%")->orderBy("id", "desc")->paginate(25);
+
+        $users = User::where("name", "like", "%" . $search . "%")->orWhere("surnameP", "like", "%" . $search . "%")
+        ->orWhere("surnameM", "like", "%" . $search . "%")->orderBy("id", "desc")->paginate(25);
 
         return response()->json([
             "total" => $users->total(),
