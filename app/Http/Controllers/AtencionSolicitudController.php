@@ -19,6 +19,8 @@ class AtencionSolicitudController extends Controller
         }
         $solicitud->personalAntencion()->sync($request->personalAtencion);
 
+        $solicitud->update(['idEstado' => 3]);
+
         return response()->json(['message' => 'Técnicos asignados correctamente'], 200);
     }
 

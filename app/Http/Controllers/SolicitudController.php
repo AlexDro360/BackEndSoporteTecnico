@@ -108,7 +108,11 @@ class SolicitudController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $solicitud = Solicitud::with('user','estado', 'tipo')->find($id);
+        if (!$solicitud) {
+            return response()->json(['message' => 'No se encontro la solicitud'], 404);
+        }
+        return response()->json($solicitud, 200);
     }
 
     /**
@@ -143,7 +147,19 @@ class SolicitudController extends Controller
 
         return response()->json([
             "message" => 200,
-            "message_text" => "La Solicitud se Termino"
+            "message_text" => "La Solicitud se Terminó"
+        ]);
+    }
+
+    public function rechazar(string $id)
+    {
+        $solicitud = Solicitud::findOrFail($id);
+
+        $solicitud->update(['idEstado' => 2]);
+
+        return response()->json([
+            "message" => 200,
+            "message_text" => "La Solicitud se Rechazó"
         ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Respuesta;
+use App\Models\Solicitud;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Validator;
@@ -50,6 +51,10 @@ class RespuestaController extends Controller
 
         Respuesta::create($data);
 
+        $solicitud = Solicitud::findOrFail($request->idSolicitud);
+
+        $solicitud->update(['idEstado' => 5]);
+
         return response()->json(['message' => 'Respuesta agregada exitosamente'], 201);
     }
 
@@ -60,6 +65,15 @@ class RespuestaController extends Controller
     {
 
         $respuestas = Respuesta::with('tipoServicio','tipoMantenimiento', 'solicitud')->find($id);
+        if (!$respuestas) {
+            return response()->json(['message' => 'No se encontro la respuesta'], 404);
+        }
+        return response()->json($respuestas, 200);
+    }
+
+    public function getRespuesta(string $id)
+    {
+        $respuestas = Respuesta::with('tipoServicio','tipoMantenimiento', 'solicitud')->where('idSolicitud','=',$id)->first();
         if (!$respuestas) {
             return response()->json(['message' => 'No se encontro la respuesta'], 404);
         }

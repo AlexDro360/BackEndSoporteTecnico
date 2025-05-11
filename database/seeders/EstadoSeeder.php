@@ -13,11 +13,10 @@ class EstadoSeeder extends Seeder
      */
     public function run(): void
     {
-        Estado::create(['nombre'=>'Espera']);
-        Estado::create(['nombre'=>'Asignado']);
-        Estado::create(['nombre'=>'Revisión']);
-        Estado::create(['nombre'=>'Espera De Parte']);
-        Estado::create(['nombre'=>'Concluido']);
-        Estado::create(['nombre'=>'Rechazado']);
+        Estado::create(['nombre'=>'Recibida']);
+        Estado::create(['nombre'=>'Rechazada']);
+        Estado::create(['nombre'=>'Asignada']);
+        Estado::create(['nombre'=>'En proceso']);
+        Estado::create(['nombre'=>'Finalizada']);
     }
 }

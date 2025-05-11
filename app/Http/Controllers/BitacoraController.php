@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bitacora;
+use App\Models\Solicitud;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Validator;
@@ -49,6 +50,10 @@ class BitacoraController extends Controller
         $data['fecha'] = Carbon::now()->toDateString();
 
         Bitacora::create($data);
+
+        $solicitud = Solicitud::findOrFail($request->idSolicitud);
+
+        $solicitud->update(['idEstado' => 4]);
 
         return response()->json(['message' => 'Bitacora agregada exitosamente'], 201);
     }

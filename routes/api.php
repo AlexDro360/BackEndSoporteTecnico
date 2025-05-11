@@ -73,6 +73,7 @@ Route::group([
     Route::post('/agregar', [RespuestaController::class, 'store']);
     Route::put('/editar/{id}', [RespuestaController::class, 'update']);
     Route::delete('/borrar/{id}', [RespuestaController::class, 'destroy']);
+    Route::get('/buscar/{id}', [RespuestaController::class, 'getRespuesta']);
     
     
 });
@@ -89,6 +90,7 @@ Route::group([
 });
 
 Route::resource("solicitudes", SolicitudController::class);
+Route::patch('/solicitud/rechazar/{id}', [SolicitudController::class, 'rechazar']);
 Route::resource("estados", EstadoController::class);
 Route::resource("tipos", TipoController::class);
 Route::get('tipomantenimientos', [TipoMantenimientoController::class, 'index']);
