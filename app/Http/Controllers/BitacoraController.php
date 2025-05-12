@@ -26,10 +26,7 @@ class BitacoraController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        
-    }
+    public function create() {}
 
     /**
      * Store a newly created resource in storage.
@@ -66,18 +63,27 @@ class BitacoraController extends Controller
 
         $bitacoras = Bitacora::with('solicitud')->find($id);
         if (!$bitacoras) {
-            return response()->json(['message' => 'No se encontro la bitacora'], 404);
+            return response()->json(['message' => 'No se encontro la bitácora'], 404);
         }
         return response()->json($bitacoras, 200);
     }
 
+    public function getBitacora(string $id)
+    {
+        $bitacora = Bitacora::where('idSolicitud', '=', $id)->first();
+
+        if (!$bitacora) {
+            return response()->json(null, 200);
+        }
+
+        return response()->json($bitacora, 200);
+    }
+
+
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        
-    }
+    public function edit(string $id) {}
 
     /**
      * Update the specified resource in storage.
@@ -128,6 +134,5 @@ class BitacoraController extends Controller
         }
         $bitacora->delete();
         return response()->json(['message' => 'Bitacora eliminada correctamente'], 200);
-    
     }
 }

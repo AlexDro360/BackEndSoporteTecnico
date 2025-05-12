@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Bitacora;
 use Illuminate\Http\Request;
 
 use App\Models\Solicitud;
+
+use function PHPUnit\Framework\isEmpty;
 
 class SolicitudController extends Controller
 {
@@ -12,7 +15,7 @@ class SolicitudController extends Controller
     {
         $search = $request->get("search");
 
-        $solicitudes = Solicitud::with('user')
+        $solicitudes = Solicitud::with('user', 'respuesta')
             ->where("idUser", "like", "%" . $search . "%")
             ->orderBy("id", "desc")
             ->paginate(25);
@@ -48,6 +51,7 @@ class SolicitudController extends Controller
                     'descripcionRechazo' => $solicitud->descripcionRechazo,
                     'idTipo' => $solicitud->idTipo,
                     'idEstado' => $solicitud->idEstado,
+                    'respuesta' => $solicitud->respuesta ? true : false,
                     'created_format_at' => $solicitud->created_at->format("Y-m-d h:i A"),
                     'updated_format_at' => $solicitud->updated_at->format("Y-m-d h:i A"),
                 ];

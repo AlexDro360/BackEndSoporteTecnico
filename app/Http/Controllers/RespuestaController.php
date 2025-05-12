@@ -43,7 +43,7 @@ class RespuestaController extends Controller
 
         ]);
         if ($validator->fails()) {
-            return response()->json( $validator->errors(), 422);
+            return response()->json($validator->errors(), 422);
         }
 
         $data = $validator->validated();
@@ -53,7 +53,9 @@ class RespuestaController extends Controller
 
         $solicitud = Solicitud::findOrFail($request->idSolicitud);
 
-        $solicitud->update(['idEstado' => 5]);
+        if ($solicitud->idEstado != 2) {
+            $solicitud->update(['idEstado' => 5]);
+        }
 
         return response()->json(['message' => 'Respuesta agregada exitosamente'], 201);
     }
@@ -64,7 +66,7 @@ class RespuestaController extends Controller
     public function show(string $id)
     {
 
-        $respuestas = Respuesta::with('tipoServicio','tipoMantenimiento', 'solicitud')->find($id);
+        $respuestas = Respuesta::with('tipoServicio', 'tipoMantenimiento', 'solicitud')->find($id);
         if (!$respuestas) {
             return response()->json(['message' => 'No se encontro la respuesta'], 404);
         }
@@ -73,7 +75,7 @@ class RespuestaController extends Controller
 
     public function getRespuesta(string $id)
     {
-        $respuestas = Respuesta::with('tipoServicio','tipoMantenimiento', 'solicitud')->where('idSolicitud','=',$id)->first();
+        $respuestas = Respuesta::with('tipoServicio', 'tipoMantenimiento', 'solicitud')->where('idSolicitud', '=', $id)->first();
         if (!$respuestas) {
             return response()->json(['message' => 'No se encontro la respuesta'], 404);
         }
@@ -144,12 +146,13 @@ class RespuestaController extends Controller
         return response()->json(['message' => 'Respuesta eliminada correctamente'], 200);
     }
 
-    public function generarPDF($id) {
-        $respuesta = Respuesta::with('tipoServicio','tipoMantenimiento', 'solicitud.user.departamento')->find($id);
+    public function generarPDF($id)
+    {
+        $respuesta = Respuesta::with('tipoServicio', 'tipoMantenimiento', 'solicitud.user.departamento')->find($id);
         if (!$respuesta) {
             return response()->json(['message' => 'No se encontro la Respuesta'], 404);
         }
-        $pdf = PDF::loadView('respuesta',['respuesta'=>$respuesta]);
+        $pdf = PDF::loadView('respuesta', ['respuesta' => $respuesta]);
         return $pdf->stream();
     }
 }

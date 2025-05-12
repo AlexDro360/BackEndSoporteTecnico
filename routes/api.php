@@ -62,6 +62,7 @@ Route::group([
     Route::post('/agregar', [BitacoraController::class, 'store']);
     Route::put('/editar/{id}', [BitacoraController::class, 'update']);
     Route::delete('/borrar/{id}', [BitacoraController::class, 'destroy']);
+    Route::get('/buscar/{id}', [BitacoraController::class, 'getBitacora']);
 });
 
 Route::group([
