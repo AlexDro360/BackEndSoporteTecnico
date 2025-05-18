@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('atencion_solicituds', function (Blueprint $table) {
+        Schema::create('centro_computo_jefes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('solicitud_id')->constrained()->onDelete('cascade');
-            $table->date('fechaAtencion');
-            $table->time('horaAtencion');
+            $table->string('nombres', 50);
+            $table->string('apellidoP', 50);
+            $table->string('apellidoM', 50);
+            $table->boolean('estado');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('atencion_solicituds');
+        Schema::dropIfExists('centro_computo_jefes');
     }
 };

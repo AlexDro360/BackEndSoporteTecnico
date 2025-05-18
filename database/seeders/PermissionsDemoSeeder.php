@@ -83,6 +83,7 @@ class PermissionsDemoSeeder extends Seeder
             'role_id' => '1',
             'departamento_id' => 1,
             'status' => true,
+            'disponibilidad' => true,
         ]);
         $user->assignRole($role3);
 
@@ -96,6 +97,7 @@ class PermissionsDemoSeeder extends Seeder
             'role_id' => '1',
             'departamento_id' => 10,
             'status' => true,
+            'disponibilidad' => true,
         ]);
         $user->assignRole($rolePruebas);
 
@@ -104,6 +106,7 @@ class PermissionsDemoSeeder extends Seeder
             'role_id' => 2, 
             'departamento_id' => 10,
             'status' => true,
+            'disponibilidad' => true,
         ]);
 
         foreach ($tecnicos as $tecnico) {

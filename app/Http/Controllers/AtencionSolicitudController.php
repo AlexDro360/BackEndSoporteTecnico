@@ -17,7 +17,18 @@ class AtencionSolicitudController extends Controller
         if (!is_array($request->personalAtencion)) {
             return response()->json(['message' => 'La información de técnicos no es válida'], 400);
         }
-        $solicitud->personalAntencion()->sync($request->personalAtencion);
+
+        $tecnicosData = [];
+        foreach ($request->personalAtencion as $idTecnico) {
+            $tecnicosData[$idTecnico] = [
+                'fechaAtencion' => $request->fechaAtencion,
+                'horaAtencion'  => $request->horaAtencion,
+            ];
+        }
+
+        User::whereIn('id', $request->personalAtencion)->update(['disponibilidad' => false]);
+
+        $solicitud->personalAtencion()->sync($tecnicosData);
 
         $solicitud->update(['idEstado' => 3]);
 
@@ -56,6 +67,7 @@ class AtencionSolicitudController extends Controller
     {
         $tecnicos = User::with('roles')
             ->where('status', true)
+            ->where('disponibilidad', true)
             ->whereHas('roles', function ($query) {
                 $query->where('name', 'Técnico');
             })

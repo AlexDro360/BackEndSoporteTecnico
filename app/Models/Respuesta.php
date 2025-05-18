@@ -9,10 +9,12 @@ class Respuesta extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'folio',
         'asunto',
         'descripcion',
         'fecha',
-        'nombreAprovo',
+        'nombreVerifico',
+        'idCentroComputoJefe',
         'idTipoMantenimiento',
         'idTipoServicio',
         'idSolicitud',
@@ -30,5 +32,10 @@ class Respuesta extends Model
     public function solicitud()
     {
         return $this->belongsTo(Solicitud::class, 'idSolicitud');
+    }
+
+    public function  aprobo()
+    {
+        return $this->belongsTo(CentroComputoJefe::class, 'idCentroComputoJefe');
     }
 }

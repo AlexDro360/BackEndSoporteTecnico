@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('atencion_solicituds', function (Blueprint $table) {
+        Schema::create('config_adicionales', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('solicitud_id')->constrained()->onDelete('cascade');
-            $table->date('fechaAtencion');
-            $table->time('horaAtencion');
+            $table->integer("FolioSolicitud");
+            $table->integer("FolioRespuesta");
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('atencion_solicituds');
+        Schema::dropIfExists('config_adicionales');
     }
 };

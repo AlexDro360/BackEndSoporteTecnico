@@ -13,6 +13,7 @@ class Solicitud extends Model
 
     protected $fillable = [
         'idUser',
+        'folio',
         'descripcionUser',
         'fechaAsignacion',
         'fechaRevision',
@@ -39,7 +40,7 @@ class Solicitud extends Model
         return $this->belongsTo(Tipo::class, 'idTipo');
     }
 
-    
+
 
     public function bitacora()
     {
@@ -51,8 +52,10 @@ class Solicitud extends Model
         return $this->hasOne(Respuesta::class, 'idSolicitud');
     }
 
-    public function personalAntencion()
+    public function personalAtencion()
     {
-        return $this->belongsToMany(User::class, 'atencion_solicituds');
+        return $this->belongsToMany(User::class, 'atencion_solicituds')
+            ->withPivot('fechaAtencion', 'horaAtencion')
+            ->withTimestamps();;
     }
 }

@@ -16,11 +16,14 @@ return new class extends Migration
             $table->string('asunto', 100); 
             $table->string('descripcion', 500); 
             $table->dateTime('fecha');
-            $table->string('nombreAprovo', 150); 
-            $table->unsignedBigInteger('idTipoMantenimiento');
+            $table->string('nombreVerifico', 150); 
+            $table->integer('folio');
+            $table->unsignedBigInteger('idCentroComputoJefe'); 
+            $table->unsignedBigInteger('idTipoMantenimiento')->nullable();
             $table->unsignedBigInteger('idSolicitud'); 
-            $table->unsignedBigInteger('idTipoServicio');
+            $table->unsignedBigInteger('idTipoServicio')->nullable();
             
+            $table->foreign('idCentroComputoJefe')->references('id')->on('centro_computo_jefes')->onDelete('restrict');
             $table->foreign('idTipoMantenimiento')->references('id')->on('tipo_mantenimientos')->onDelete('restrict'); 
             $table->foreign('idTipoServicio')->references('id')->on('tipo_servicios')->onDelete('restrict');
             $table->foreign('idSolicitud')->references('id')->on('solicituds')->onDelete('restrict'); 

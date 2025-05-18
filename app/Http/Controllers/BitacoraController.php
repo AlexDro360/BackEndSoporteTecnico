@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bitacora;
 use App\Models\Solicitud;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Validator;
@@ -37,6 +38,7 @@ class BitacoraController extends Controller
             'descFalla' => 'required|string|max:200',
             'descSolucion' => 'required|string|max:200',
             'materialReq' => 'required|string|max:200',
+            'duracion' => 'required|integer|min:1',
             'idSolicitud' => 'required|exists:solicituds,id',
         ]);
         if ($validator->fails()) {
@@ -48,9 +50,12 @@ class BitacoraController extends Controller
 
         Bitacora::create($data);
 
-        $solicitud = Solicitud::findOrFail($request->idSolicitud);
+        $solicitud = Solicitud::with('personalAtencion')->findOrFail($request->idSolicitud);
 
         $solicitud->update(['idEstado' => 4]);
+
+        $ids = $solicitud->personalAtencion->pluck('id');
+        User::whereIn('id', $ids)->update(['disponibilidad' => true]);
 
         return response()->json(['message' => 'Bitacora agregada exitosamente'], 201);
     }
@@ -70,7 +75,7 @@ class BitacoraController extends Controller
 
     public function getBitacora(string $id)
     {
-        $bitacora = Bitacora::where('idSolicitud', '=', $id)->first();
+        $bitacora = Bitacora::with('solicitud')->where('idSolicitud', '=', $id)->first();
 
         if (!$bitacora) {
             return response()->json(null, 200);
@@ -98,6 +103,7 @@ class BitacoraController extends Controller
             'descFalla' => 'sometimes|string|max:200',
             'descSolucion' => 'sometimes|string|max:200',
             'materialReq' => 'sometimes|string|max:200',
+            'duracion' => 'sometimes|integer|min:1',
             'idSolicitud' => 'sometimes|exists:solicituds,id',
         ]);
         if ($validator->fails()) {
@@ -111,6 +117,9 @@ class BitacoraController extends Controller
         }
         if ($request->has('materialReq')) {
             $bitacora->materialReq = $request->materialReq;
+        }
+        if ($request->has('duracion')) {
+            $bitacora->duracion = $request->duracion;
         }
         if ($request->has('idSolicitud')) {
             $bitacora->idSolicitud = $request->idSolicitud;

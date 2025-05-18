@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('descFalla', 200);
             $table->string('descSolucion', 200);
             $table->string('materialReq', 200);
+            $table->integer('duracion');
             $table->unsignedBigInteger('idSolicitud'); 
 
             

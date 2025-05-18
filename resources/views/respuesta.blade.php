@@ -86,26 +86,43 @@
     <div class="center bold" style="margin-bottom: 10px;">Orden de Trabajo de Mantenimiento</div>
     
     <div class="numero_orden" style="margin-bottom: 10px;">
-        <div class="bold" style="text-align: right;">Número de orden: {{ $respuesta['id'] }}</div>
+        <div class="bold" style="text-align: right;">
+            Número de orden: {{ str_pad($respuesta->folio, 3, '0', STR_PAD_LEFT) }}
+        </div>
+
     </div>
     
 
     <table style="margin-bottom: 40px;">
-        <tr >
+        <tr>
             <td class="bold">Mantenimiento:</td>
-            <td class="bold">{{ $respuesta->tipoMantenimiento->nombre === 'Interno' ? 'X Interno' : 'Interno' }}</td>
-            <td class="bold">{{ $respuesta->tipoMantenimiento->nombre === 'Externo' ? 'X Externo' : 'Externo' }}</td>
+            <td class="bold">{{ isset($respuesta->tipoMantenimiento) && $respuesta->tipoMantenimiento->nombre === 'Interno' ? 'X Interno' : 'Externo' }}</td>
+            <td class="bold">{{ isset($respuesta->tipoMantenimiento) && $respuesta->tipoMantenimiento->nombre === 'Externo' ? 'X Externo' : 'Interno' }}</td>
         </tr>
+
+
+
         <tr style="border-top: 1px solid black;">
             <td class="bold">Tipo de servicio:</td>
-            <td>{{ $respuesta->tipoServicio->nombre }}</td>
+            <td>
+                {{ isset($respuesta->tipoServicio) ? $respuesta->tipoServicio->nombre : '' }}
+            </td>
             <td></td>
         </tr>
         <tr style="border-top: 1px solid black;">
             <td class="bold">Asignado a:</td>
-            <td>{{ $respuesta['asignado_a'] }}</td>
+            <td>
+                @if(isset($respuesta->solicitud->personalAtencion) && $respuesta->solicitud->personalAtencion->isNotEmpty())
+                    @foreach($respuesta->solicitud->personalAtencion as $persona)
+                        {{ $persona->name }} {{ $persona->surnameP }} {{ $persona->surnameM }}<br>
+                    @endforeach
+                @else
+                @endif
+            </td>
+
             <td></td>
         </tr>
+
     </table>
     
     <table style="margin-bottom: 10px;">
@@ -123,14 +140,14 @@
             <td colspan="2" class="bold">Departamento: {{ $respuesta->solicitud->user->departamento->nombre}}</td>
         </tr>
         <tr>
-            <td colspan="2" class="bold">Folio I: {{ $respuesta['id'] }}</td>
+            <td colspan="2" class="bold">Folio I: {{ str_pad($respuesta->folio, 3, '0', STR_PAD_LEFT) }}</td>
         </tr>
         <tr style="border-top: 1px solid black;">
-            <td class="bold" style="width: 50%;">Verificado y Liberado por: {{ $respuesta['nombreAprovo'] }}</td>
+            <td class="bold" style="width: 50%;">Verificado y Liberado por: {{ $respuesta['nombreVerifico'] }}</td>
             <td class="bold">Fecha y Firma: {{ $respuesta['fecha'] }}</td>
         </tr>
         <tr style="border-top: 1px solid black;">
-            <td class="bold" style="width: 50%;">Aprobado por: {{ $respuesta['nombreAprovo'] }}</td>
+            <td class="bold" style="width: 50%;">Aprobado por: {{ $respuesta->aprobo->nombreCompleto }}</td>
             <td class="bold">Fecha y Firma: {{ $respuesta['fecha'] }}</td>
         </tr>
     </table>

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('solicituds', function (Blueprint $table) {
             $table->id();
+            $table->integer('folio');
             $table->bigInteger('idUser')->nullable();
             $table->text('descripcionUser')->nullable();
             $table->string('fechaAsignacion')->nullable();

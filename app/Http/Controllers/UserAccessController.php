@@ -44,6 +44,7 @@ class UserAccessController extends Controller
                     //'avatar'=> $user->avatar ? env("APP_URL")."storage/".$user->avatar : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                     'avatar' => $user->avatar ? asset("storage/" . $user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                     'status' => $user->status,
+                    'disponibilidad' => $user->disponibilidad,
                     'created_format_at' => $user->created_at->format("Y-m-d h:i A"),
                 ];
             }),
@@ -82,6 +83,7 @@ class UserAccessController extends Controller
         }
 
         $request->request->add(["status" => 1]);
+        $request->request->add(["disponibilidad" => 1]);
         $role = Role::findOrFail($request->role_id);
         $user = User::create($request->all());
         $user->assignRole($role);
@@ -105,6 +107,7 @@ class UserAccessController extends Controller
                 'num_empleado' => $user->num_empleado,
                 'avatar' => $user->avatar ? asset("storage/" . $user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                 'status' => $user->status,
+                'disponibilidad' => $user->disponibilidad,
                 'created_format_at' => $user->created_at->format("Y-m-d h:i A"),
             ]
         ]);

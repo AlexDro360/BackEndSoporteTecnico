@@ -14,6 +14,7 @@ class Bitacora extends Model
         'descFalla',
         'descSolucion',
         'materialReq',
+        'duracion',
         'idSolicitud',
     ];
 

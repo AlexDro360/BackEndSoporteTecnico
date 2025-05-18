@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ConfigAdicionales;
 use App\Models\Respuesta;
 use App\Models\Solicitud;
 use Carbon\Carbon;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 use Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Barryvdh\DomPDF\PDF as DomPDFPDF;
+use DB;
 
 class RespuestaController extends Controller
 {
@@ -36,26 +38,35 @@ class RespuestaController extends Controller
         $validator = Validator::make($request->all(), [
             'asunto' => 'required|string|max:100',
             'descripcion' => 'required|string|max:500',
-            'nombreAprovo' => 'required|string|max:150',
-            'idTipoMantenimiento' => 'required|exists:tipo_mantenimientos,id',
-            'idTipoServicio' => 'required|exists:tipo_servicios,id',
+            'nombreVerifico' => 'required|string|max:150',
+            'idCentroComputoJefe' => 'required|exists:centro_computo_jefes,id',
+            'idTipoMantenimiento' => 'sometimes|exists:tipo_mantenimientos,id',
+            'idTipoServicio' => 'sometimes|exists:tipo_servicios,id',
             'idSolicitud' => 'required|exists:solicituds,id',
-
         ]);
+
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
         $data = $validator->validated();
-        $data['fecha'] = Carbon::now()->toDateString();
+        DB::transaction(function () use (&$data, &$request) {
 
-        Respuesta::create($data);
+            $confAd = ConfigAdicionales::lockForUpdate()->first();
 
-        $solicitud = Solicitud::findOrFail($request->idSolicitud);
+            $data['folio'] = $confAd->FolioRespuesta;
+            $data['fecha'] = Carbon::now()->toDateString();
 
-        if ($solicitud->idEstado != 2) {
-            $solicitud->update(['idEstado' => 5]);
-        }
+            $confAd->FolioRespuesta ++;
+            $confAd->save();
+
+            Respuesta::create($data);
+
+            $solicitud = Solicitud::findOrFail($request->idSolicitud);
+            if ($solicitud->idEstado != 2) {
+                $solicitud->update(['idEstado' => 5]);
+            }
+        });
 
         return response()->json(['message' => 'Respuesta agregada exitosamente'], 201);
     }
@@ -73,12 +84,15 @@ class RespuestaController extends Controller
         return response()->json($respuestas, 200);
     }
 
+
+
     public function getRespuesta(string $id)
     {
-        $respuestas = Respuesta::with('tipoServicio', 'tipoMantenimiento', 'solicitud')->where('idSolicitud', '=', $id)->first();
+        $respuestas = Respuesta::with('tipoServicio', 'tipoMantenimiento', 'solicitud', 'aprobo')->where('idSolicitud', '=', $id)->first();
         if (!$respuestas) {
             return response()->json(['message' => 'No se encontro la respuesta'], 404);
         }
+
         return response()->json($respuestas, 200);
     }
 
@@ -99,7 +113,8 @@ class RespuestaController extends Controller
         $validator = Validator::make($request->all(), [
             'asunto' => 'sometimes|string|max:100',
             'descripcion' => 'sometimes|string|max:500',
-            'nombreAprovo' => 'sometimes|string|max:150',
+            'nombreVerifico' => 'sometimes|string|max:150',
+            'idCentroComputoJefe' => 'sometimes|exists:centro_computo_jefes,id',
             'idTipoMantenimiento' => 'sometimes|exists:tipo_mantenimientos,id',
             'idTipoServicio' => 'sometimes|exists:tipo_servicios,id',
             'idSolicitud' => 'sometimes|exists:solicituds,id',
@@ -113,8 +128,8 @@ class RespuestaController extends Controller
         if ($request->has('descripcion')) {
             $respuesta->descripcion = $request->descripcion;
         }
-        if ($request->has('nombreAprovo')) {
-            $respuesta->nombreAprovo = $request->nombreAprovo;
+        if ($request->has('nombreVerifico')) {
+            $respuesta->nombreVerifico = $request->nombreVerifico;
         }
         if ($request->has('idtipoMantenimiento')) {
             $respuesta->idtipoMantenimiento = $request->idtipoMantenimiento;
@@ -148,7 +163,7 @@ class RespuestaController extends Controller
 
     public function generarPDF($id)
     {
-        $respuesta = Respuesta::with('tipoServicio', 'tipoMantenimiento', 'solicitud.user.departamento')->find($id);
+        $respuesta = Respuesta::with('tipoServicio', 'tipoMantenimiento', 'solicitud.user.departamento', 'solicitud.personalAtencion', 'aprobo')->find($id);
         if (!$respuesta) {
             return response()->json(['message' => 'No se encontro la Respuesta'], 404);
         }

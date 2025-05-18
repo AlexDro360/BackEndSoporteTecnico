@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('num_empleado',35)->nullable();
             $table->string('avatar',250)->nullable();
             $table->boolean('status')->nullable();
+            $table->boolean('disponibilidad');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
