@@ -32,23 +32,27 @@ class PermissionsDemoSeeder extends Seeder
 
         Permission::create(['guard_name' => 'api', 'name' => 'view_solicitud']);
         Permission::create(['guard_name' => 'api', 'name' => 'register_solicitud']);
-        Permission::create(['guard_name' => 'api', 'name' => 'edit_solicitud']);
-        Permission::create(['guard_name' => 'api', 'name' => 'delete_solicitud']);
+        Permission::create(['guard_name' => 'api', 'name' => 'asign_tecnico']);
+        Permission::create(['guard_name' => 'api', 'name' => 'decline_solicitud']);
+        Permission::create(['guard_name' => 'api', 'name' => 'response_solicitud']);
+        Permission::create(['guard_name' => 'api', 'name' => 'register_bitacora_solicitud']);
 
-        Permission::create(['guard_name' => 'api', 'name' => 'view_response']);
-        Permission::create(['guard_name' => 'api', 'name' => 'register_response']);
-        Permission::create(['guard_name' => 'api', 'name' => 'edit_response']);
-        Permission::create(['guard_name' => 'api', 'name' => 'delete_response']);
+        Permission::create(['guard_name' => 'api', 'name' => 'view_bitacora']);
+        Permission::create(['guard_name' => 'api', 'name' => 'edit_bitacora']);
 
-        // create roles and assign existing permissions
-        // $role1 = Role::create(['guard_name' => 'api','name' => 'writer']);
-        // $role1->givePermissionTo('edit articles');
-        // $role1->givePermissionTo('delete articles');
+        Permission::create(['guard_name' => 'api', 'name' => 'view_extra']);
+        Permission::create(['guard_name' => 'api', 'name' => 'add_Jefe']);
+        Permission::create(['guard_name' => 'api', 'name' => 'reload_folio_respuesta']);
+        Permission::create(['guard_name' => 'api', 'name' => 'edit_folio_respuesta']);
+        Permission::create(['guard_name' => 'api', 'name' => 'reload_folio_solicitud']);
+        Permission::create(['guard_name' => 'api', 'name' => 'edit_folio_solicitud']);
 
-        // $role2 = Role::create(['guard_name' => 'api','name' => 'admin']);
-        // $role2->givePermissionTo('publish articles');
-        // $role2->givePermissionTo('unpublish articles');
+        Permission::create(['guard_name' => 'api', 'name' => 'view_my_solicitudes']);
+        Permission::create(['guard_name' => 'api', 'name' => 'register_my_solicitudes']);
+        Permission::create(['guard_name' => 'api', 'name' => 'view_response_my_solicitudes']);
 
+        Permission::create(['guard_name' => 'api', 'name' => 'view_dashboard']);
+        
         $role3 = Role::create(['guard_name' => 'api', 'name' => 'Super-Admin']);
 
         $roleTecnico = Role::create(['guard_name' => 'api', 'name' => 'Técnico']);
