@@ -24,6 +24,7 @@ class Departamento extends Model implements JWTSubject
     protected $fillable = [
         'id',
         'nombre',
+        'abreviatura',
     ];
     
 

@@ -11,6 +11,7 @@ use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserAccessController;
 use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\RespuestaController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\TipoController;
@@ -106,6 +107,14 @@ Route::group([
     Route::post('/folios/reset/solicitud', [ConfigAdicionalesController::class, 'resetFolioSolicitud']);
     Route::post('/folios/reset/respuesta', [ConfigAdicionalesController::class, 'resetFolioRespuesta']);
     Route::put('/folios/update', [ConfigAdicionalesController::class, 'updateFolios']);
+});
+
+Route::group([
+    'prefix' => 'reporte',
+    'middleware' => 'auth:api',
+], function ($router) {
+    Route::get('/datos-graficas', [ReportesController::class, 'getDatos']);
+    Route::get('/filtro', [ReportesController::class, 'filtro']);
 });
 
 Route::resource("solicitudes", SolicitudController::class);
