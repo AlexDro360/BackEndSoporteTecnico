@@ -13,10 +13,11 @@ class RolePermissionController extends Controller
     public function index(Request $request)
     {
         //$this->authorize('viewAny', Role::class);
+        $perPage = $request->input('perPage', 10);
 
         $search = $request->get("search");
 
-        $roles = Role::with(["permissions"])->where("name","like","%".$search."%")->orderBy("id","desc")->paginate(25);
+        $roles = Role::with(["permissions"])->where("name","like","%".$search."%")->orderBy("id","desc")->paginate($perPage);
 
         return response()->json([
             "total" => $roles->total(),

@@ -15,6 +15,8 @@ class UserAccessController extends Controller
      */
     public function index(Request $request)
     {
+        $perPage = $request->input('perPage', 10);
+
         $this->authorize('viewAny', User::class);
         $search = $request->get("search");
 
@@ -23,7 +25,7 @@ class UserAccessController extends Controller
         //$users = User::with('departamento')->where("name", "like", "%" . $search . "%")->orderBy("id", "desc")->paginate(25);
 
         $users = User::where("name", "like", "%" . $search . "%")->orWhere("surnameP", "like", "%" . $search . "%")
-        ->orWhere("surnameM", "like", "%" . $search . "%")->orderBy("id", "desc")->paginate(25);
+        ->orWhere("surnameM", "like", "%" . $search . "%")->orderBy("id", "desc")->paginate($perPage);
 
         return response()->json([
             "total" => $users->total(),

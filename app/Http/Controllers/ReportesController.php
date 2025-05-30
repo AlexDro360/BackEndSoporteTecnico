@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Departamento;
 use App\Models\Solicitud;
 use App\Models\Tipo;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
+use Log;
 
 class ReportesController extends Controller
 {
@@ -128,6 +130,21 @@ class ReportesController extends Controller
         $cantMes = $porMes->pluck('total')->toArray();
         $mes = $porMes->pluck('mes')->toArray();
 
+        Log::info('Fechas de búsqueda', [
+            'Inicio' => Carbon::parse($fechaInicio)->startOfDay()->toDateTimeString(),
+            'Fin' => Carbon::parse($fechaFin)->endOfDay()->toDateTimeString(),
+
+            'Inicio2' => $fechaInicio,
+            'Fin2' => $fechaFin
+        ]);
+
+        Log::info('Zona horaria actual', [
+            'App timezone' => config('app.timezone'),
+            'Carbon now' => Carbon::now()->toDateTimeString(),
+            'DB now' => DB::select("SELECT NOW() as now")[0]->now,
+        ]);
+
+
         $datosPorFecha = DB::table('solicituds')
             ->leftJoin('users', 'solicituds.idUser', '=', 'users.id')
             ->when($idTipo && $idTipo !== 'null', function ($query) use ($idTipo) {
@@ -153,6 +170,10 @@ class ReportesController extends Controller
                 ];
             })
             ->toArray();
+
+        Log::info('Inicio:', ['Finalesdatos' => $datosPorFecha]);
+        // Log::info('Fin:', [Carbon::parse($fechaFin)->endOfDay()->toDateTimeString()]);
+
 
 
 

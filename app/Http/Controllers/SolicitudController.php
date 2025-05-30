@@ -17,10 +17,12 @@ class SolicitudController extends Controller
     {
         $search = $request->get("search");
 
+        $perPage = $request->input('perPage', 10);
+
         $solicitudes = Solicitud::with('user', 'respuesta')
             ->where("idUser", "like", "%" . $search . "%")
             ->orderBy("id", "desc")
-            ->paginate(25);
+            ->paginate($perPage);
 
         return response()->json([
             "total" => $solicitudes->total(),
@@ -66,13 +68,15 @@ class SolicitudController extends Controller
     {
         $search = $request->get('search');
 
+        $perPage = $request->input('perPage', 10);
+
         $solicitudes = Solicitud::with('user', 'respuesta', 'estado', 'tipo')
             ->where('idUser', $id)
             ->when($search, function ($query, $search) {
                 $query->where('folio', 'like', "%{$search}%");
             })
             ->orderBy('id', 'desc')
-            ->paginate(25);
+            ->paginate($perPage);
 
         return response()->json([
             "total" => $solicitudes->total(),

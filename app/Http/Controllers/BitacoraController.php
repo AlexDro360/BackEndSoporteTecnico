@@ -15,7 +15,7 @@ class BitacoraController extends Controller
 
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('perPage', 10);
 
         $bitacoras = Bitacora::with('solicitud')->paginate($perPage);
         if ($bitacoras->isEmpty()) {

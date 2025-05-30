@@ -111,7 +111,7 @@ Route::group([
 
 Route::group([
     'prefix' => 'reporte',
-    'middleware' => 'auth:api',
+    // 'middleware' => 'auth:api',
 ], function ($router) {
     Route::get('/datos-graficas', [ReportesController::class, 'getDatos']);
     Route::get('/filtro', [ReportesController::class, 'filtro']);
