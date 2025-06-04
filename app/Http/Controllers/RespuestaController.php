@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ConfigAdicionales;
+use App\Models\Departamento;
 use App\Models\Respuesta;
 use App\Models\Solicitud;
 use Carbon\Carbon;
@@ -52,19 +53,19 @@ class RespuestaController extends Controller
         $data = $validator->validated();
         DB::transaction(function () use (&$data, &$request) {
 
-            $confAd = ConfigAdicionales::lockForUpdate()->first();
+            $departamento = Departamento::lockForUpdate()->find(26);
 
-            $data['folio'] = $confAd->FolioRespuesta;
+            $data['folio'] = $departamento->folio;
             $data['fecha'] = Carbon::now()->toDateString();
 
-            $confAd->FolioRespuesta ++;
-            $confAd->save();
+            $departamento->folio ++;
+            $departamento->save();
 
             Respuesta::create($data);
 
             $solicitud = Solicitud::findOrFail($request->idSolicitud);
             if ($solicitud->idEstado != 2) {
-                $solicitud->update(['idEstado' => 5]);
+                $solicitud->update(['idEstado' => 6]);
             }
         });
 

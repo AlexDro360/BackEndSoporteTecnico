@@ -56,8 +56,8 @@ class PermissionsDemoSeeder extends Seeder
         $role3 = Role::create(['guard_name' => 'api', 'name' => 'Super-Admin']);
 
         $roleTecnico = Role::create(['guard_name' => 'api', 'name' => 'Técnico']);
-        $rolePruebas = Role::create(['guard_name' => 'api', 'name' => 'Pruebas']);
-        $rolePruebas->givePermissionTo([
+        $rolJefeCC = Role::create(['guard_name' => 'api', 'name' => 'Jefe Depto.']);
+        $rolJefeCC->givePermissionTo([
             'view_user',
             'register_user',
             'edit_user',
@@ -103,7 +103,7 @@ class PermissionsDemoSeeder extends Seeder
             'status' => true,
             'disponibilidad' => true,
         ]);
-        $user->assignRole($rolePruebas);
+        $user->assignRole($rolJefeCC);
 
         $tecnicos = \App\Models\User::factory()->count(3)->create([
             'password' => bcrypt('12345678'),

@@ -9,7 +9,6 @@ use App\Http\Controllers\CentroComputoJefeController;
 use App\Http\Controllers\ConfigAdicionalesController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserAccessController;
-use App\Http\Controllers\DepartamentoController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\RespuestaController;
@@ -17,6 +16,7 @@ use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\TipoController;
 use App\Http\Controllers\TipoMantenimientoController;
 use App\Http\Controllers\TipoServicioController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -104,9 +104,10 @@ Route::group([
     'middleware' => 'auth:api',
 ], function ($router) {
     Route::get('/folios', [ConfigAdicionalesController::class, 'show']);
-    Route::post('/folios/reset/solicitud', [ConfigAdicionalesController::class, 'resetFolioSolicitud']);
-    Route::post('/folios/reset/respuesta', [ConfigAdicionalesController::class, 'resetFolioRespuesta']);
-    Route::put('/folios/update', [ConfigAdicionalesController::class, 'updateFolios']);
+    Route::post('/folios/reiniciar/{id}', [ConfigAdicionalesController::class, 'resetFolioSolicitud']);
+    // Route::post('/folios/reset/respuesta/{id}', [ConfigAdicionalesController::class, 'resetFolioRespuesta']);
+    Route::put('/folios/actualizar/{id}', [ConfigAdicionalesController::class, 'updateFolios']);
+    Route::get('/estatus', [ConfigAdicionalesController::class, 'getEstatus']);
 });
 
 Route::group([
@@ -120,10 +121,14 @@ Route::group([
 Route::resource("solicitudes", SolicitudController::class);
 Route::patch('/solicitud/rechazar/{id}', [SolicitudController::class, 'rechazar']);
 Route::get('/solicitud/mis-solicitudes/{id}', [SolicitudController::class, 'misSolicitudes']);
+Route::get('/solicitud/mis-solicitudes-atendidas/{id}', [SolicitudController::class, 'misSolicitudesAtendidas']);
+Route::put('/solicitud/nosolucion/{id}', [SolicitudController::class, 'noSolucionada']);
+
 Route::resource("estados", EstadoController::class);
 Route::resource("tipos", TipoController::class);
 Route::get('tipomantenimientos', [TipoMantenimientoController::class, 'index']);
 Route::get('tiposervicios', [TipoServicioController::class, 'index']);
 Route::get('departamentos', 'App\Http\Controllers\DepartamentoController@index');
+
 Route::get('/pdf/{id}', [RespuestaController::class, 'generarPDF']);
 Route::get('/solicitud/pdf/{id}', [SolicitudController::class, 'generarPDF']);

@@ -15,8 +15,9 @@ class EstadoSeeder extends Seeder
     {
         Estado::create(['nombre'=>'Recibida']);
         Estado::create(['nombre'=>'Rechazada']);
-        Estado::create(['nombre'=>'Asignada']);
-        Estado::create(['nombre'=>'En proceso']);
+        Estado::create(['nombre'=>'Atendiendo']);
+        Estado::create(['nombre'=>'No Solucionada']);
+        Estado::create(['nombre'=>'Solucionada']);
         Estado::create(['nombre'=>'Finalizada']);
     }
 }

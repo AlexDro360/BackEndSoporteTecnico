@@ -28,7 +28,7 @@ class AtencionSolicitudController extends Controller
 
         User::whereIn('id', $request->personalAtencion)->update(['disponibilidad' => false]);
 
-        $solicitud->personalAtencion()->sync($tecnicosData);
+        $solicitud->personalAtencion()->attach($tecnicosData);
 
         $solicitud->update(['idEstado' => 3]);
 
@@ -69,7 +69,7 @@ class AtencionSolicitudController extends Controller
             ->where('status', true)
             ->where('disponibilidad', true)
             ->whereHas('roles', function ($query) {
-                $query->where('name', 'Técnico');
+                $query->where('id', '2');
             })
             ->get();
         return response()->json($tecnicos, 200);

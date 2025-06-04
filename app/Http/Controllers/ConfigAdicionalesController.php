@@ -3,48 +3,58 @@
 namespace App\Http\Controllers;
 
 use App\Models\ConfigAdicionales;
+use App\Models\Departamento;
+use App\Models\Estado;
 use Illuminate\Http\Request;
 
 class ConfigAdicionalesController extends Controller
 {
-    public function show()
+    public function show(Request $request)
     {
-        $config = ConfigAdicionales::first();
-        return response()->json($config);
+        $search = $request->get('search');
+
+        $perPage = $request->input('perPage', 10);
+
+        $folios = Departamento::where("nombre", "like", "%" . $search . "%")->paginate($perPage);
+        return response()->json($folios);
     }
 
-    public function resetFolioSolicitud()
+    public function resetFolioSolicitud(string $id)
     {
-        $config = ConfigAdicionales::first();
-        $config->FolioSolicitud = 1;
+        $config = Departamento::find($id);
+        $config->folio = 1;
         $config->save();
 
         return response()->json(['message' => 'Folio de solicitud reiniciado correctamente', 'data' => $config]);
     }
 
-    public function resetFolioRespuesta()
+    public function resetFolioRespuesta(string $id)
     {
-        $config = ConfigAdicionales::first();
-        $config->FolioRespuesta = 1;
+        $config = Departamento::where('abreviatura');
+        $config->folio = 1;
         $config->save();
 
         return response()->json(['message' => 'Folio de respuesta reiniciado correctamente', 'data' => $config]);
     }
 
-    
-    public function updateFolios(Request $request)
+
+    public function updateFolios(Request $request, string $id)
     {
         $request->validate([
-            'FolioSolicitud' => 'nullable|integer|min:0',
-            'FolioRespuesta' => 'nullable|integer|min:0',
+            'folio' => 'nullable|integer|min:0',
         ]);
 
-        $config = ConfigAdicionales::first();
+        $config = Departamento::find($id);
         $config->update([
-            'FolioSolicitud' => $request->input('FolioSolicitud', $config->FolioSolicitud),
-            'FolioRespuesta' => $request->input('FolioRespuesta', $config->FolioRespuesta),
+            'folio' => $request->input('folio', $config->folio),
         ]);
 
         return response()->json(['message' => 'Folios actualizados correctamente', 'data' => $config]);
+    }
+
+    public function getEstatus()
+    {
+        $estatus = Estado::all();
+        return response()->json($estatus, 200);
     }
 }

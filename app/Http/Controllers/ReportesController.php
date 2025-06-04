@@ -42,7 +42,7 @@ class ReportesController extends Controller
             ->count();
 
         $solicitudesFinalizadas = (clone $baseQuery)
-            ->where('solicituds.idEstado', 5)
+            ->whereIn('solicituds.idEstado', [5, 6])
             ->count();
 
         $solicitudesProceso = (clone $baseQuery)

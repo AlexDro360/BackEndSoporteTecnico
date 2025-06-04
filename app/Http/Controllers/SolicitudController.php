@@ -7,6 +7,7 @@ use App\Models\ConfigAdicionales;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Solicitud;
+use App\Models\User;
 use DB;
 
 use function PHPUnit\Framework\isEmpty;
@@ -17,12 +18,23 @@ class SolicitudController extends Controller
     {
         $search = $request->get("search");
 
+        $estatus = $request->input('filtroEstatus', 0);
+
         $perPage = $request->input('perPage', 10);
 
-        $solicitudes = Solicitud::with('user', 'respuesta')
-            ->where("idUser", "like", "%" . $search . "%")
-            ->orderBy("id", "desc")
-            ->paginate($perPage);
+        if ($estatus > 0) {
+            $solicitudes = Solicitud::with('user', 'respuesta')
+                ->where("folio", "like", "%" . $search . "%")
+                ->where("idEstado", "=", $estatus)
+                ->orderBy("id", "desc")
+                ->paginate($perPage);
+        } else {
+            $solicitudes = Solicitud::with('user', 'respuesta')
+                ->where("folio", "like", "%" . $search . "%")
+                ->orderBy("id", "desc")
+                ->paginate($perPage);
+        }
+
 
         return response()->json([
             "total" => $solicitudes->total(),
@@ -34,6 +46,7 @@ class SolicitudController extends Controller
                         'email' => $solicitud->user->email,
                         'phone' => $solicitud->user->phone,
                         'departamento' => $solicitud->user->departamento ? $solicitud->user->departamento->nombre : 'Sin departamento',
+                        'departamentoC' => $solicitud->user->departamento,
                         'num_empleado' => $solicitud->user->num_empleado,
                         'avatar' => $solicitud->user->avatar ? asset("storage/" . $solicitud->user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                     ] : null,
@@ -88,6 +101,65 @@ class SolicitudController extends Controller
                         'email' => $solicitud->user->email,
                         'phone' => $solicitud->user->phone,
                         'departamento' => $solicitud->user->departamento ? $solicitud->user->departamento->nombre : 'Sin departamento',
+                        'departamentoC' => $solicitud->user->departamento,
+                        'num_empleado' => $solicitud->user->num_empleado,
+                        'avatar' => $solicitud->user->avatar ? asset("storage/" . $solicitud->user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
+                    ] : null,
+                    'estado' => $solicitud->estado ? [
+                        'id' => $solicitud->estado->id,
+                        'nombre' => $solicitud->estado->nombre,
+                    ] : null,
+                    'tipo' => $solicitud->tipo ? [
+                        'id' => $solicitud->tipo->id,
+                        'nombre' => $solicitud->tipo->nombre,
+                    ] : null,
+                    'id' => $solicitud->id,
+                    'folio' => $solicitud->folio,
+                    'descripcionUser' => $solicitud->descripcionUser,
+                    'fechaAsignacion' => $solicitud->fechaAsignacion,
+                    'fechaRevision' => $solicitud->fechaRevision,
+                    'descripcionFalla' => $solicitud->descripcionFalla,
+                    'fechaSolucion' => $solicitud->fechaSolucion,
+                    'descripcionSolucion' => $solicitud->descripcionSolucion,
+                    'descripcionRechazo' => $solicitud->descripcionRechazo,
+                    'idTipo' => $solicitud->idTipo,
+                    'idEstado' => $solicitud->idEstado,
+                    'respuesta' => $solicitud->respuesta ? true : false,
+                    'created_format_at' => $solicitud->created_at->format("Y-m-d h:i A"),
+                    'updated_format_at' => $solicitud->updated_at->format("Y-m-d h:i A"),
+                ];
+            }),
+        ]);
+    }
+
+    public function misSolicitudesAtendidas(Request $request, string $id)
+    {
+        $search = $request->get('search');
+
+        $perPage = $request->input('perPage', 10);
+
+        $solicitudes = Solicitud::with(['personalAtencion', 'user', 'respuesta', 'estado', 'tipo'])
+            ->whereHas('personalAtencion', function ($q) use ($id) {
+                $q->where('user_id', $id);
+            })
+            ->when($search, function ($query, $search) {
+                $query->where('folio', 'like', "%{$search}%");
+            })
+            ->orderBy('id', 'desc')
+            ->paginate($perPage);
+
+
+        return response()->json([
+            "total" => $solicitudes->total(),
+            "solicitudes" => $solicitudes->map(function ($solicitud) {
+                return [
+                    'user' => $solicitud->user ? [
+                        'id' => $solicitud->user->id,
+                        'full_name' => $solicitud->user->name . ' ' . $solicitud->user->surname,
+                        'email' => $solicitud->user->email,
+                        'phone' => $solicitud->user->phone,
+                        'departamento' => $solicitud->user->departamento ? $solicitud->user->departamento->nombre : 'Sin departamento',
+                        'departamentoC' => $solicitud->user->departamento,
                         'num_empleado' => $solicitud->user->num_empleado,
                         'avatar' => $solicitud->user->avatar ? asset("storage/" . $solicitud->user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                     ] : null,
@@ -129,17 +201,16 @@ class SolicitudController extends Controller
     {
         DB::transaction(function () use (&$request) {
 
-            $confAd = ConfigAdicionales::lockForUpdate()->first();
+            $usuario = User::with('departamento')->find($request->idUser);
+            $departamento = $usuario->departamento;
 
             $request->request->add(["idEstado" => 1]);
-            $request->request->add(["folio" => $confAd->FolioSolicitud]);
+            $request->request->add(["folio" => $departamento->folio]);
 
             $solicitud = Solicitud::create($request->all());
 
-            $confAd->FolioSolicitud++;
-            $confAd->save();
-
-            $solicitud->load('user.departamento', 'estado', 'tipo');
+            $departamento->folio++;
+            $departamento->save();
         });
 
         return response()->json(['message' => 'Solicitud agregada exitosamente'], 201);
@@ -215,5 +286,22 @@ class SolicitudController extends Controller
 
         $pdf = PDF::loadView('solicitud', ['solicitud' => $solicitud]);
         return $pdf->stream();
+    }
+
+
+    public function noSolucionada(string $id)
+    {
+        $solicitud = Solicitud::with('personalAtencion')->findOrFail($id);
+
+        $solicitud->update(['idEstado' => 4]);
+
+        $ids = $solicitud->personalAtencion->pluck('id');
+
+        User::whereIn('id', $ids)->update(['disponibilidad' => true]);
+
+        return response()->json([
+            "message" => 200,
+            "message_text" => "La Solicitud se asigno como no solucionada"
+        ]);
     }
 }

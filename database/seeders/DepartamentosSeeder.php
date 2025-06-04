@@ -17,111 +17,138 @@ class DepartamentosSeeder extends Seeder
     {
         Departamento::create([
             'nombre' => 'Dirección',
-            'abreviatura' => 'DIR'
+            'abreviatura' => 'DIR',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Subdirección Académica',
-            'abreviatura' => 'SAC'
+            'abreviatura' => 'SAC',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Subdirección de Servicios Administrativos',
-            'abreviatura' => 'SAD'
+            'abreviatura' => 'SAD',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Subdirección de Planeación y Vinculación',
-            'abreviatura' => 'SPV'
+            'abreviatura' => 'SPV',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Ciencias Básicas',
-            'abreviatura' => 'CB'
+            'abreviatura' => 'CB',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Ciencias Económico Administrativo',
-            'abreviatura' => 'CEA'
+            'abreviatura' => 'CEA',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Ciencias de la Tierra',
-            'abreviatura' => 'CT'
+            'abreviatura' => 'CT',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Desarrollo Académico',
-            'abreviatura' => 'DA'
+            'abreviatura' => 'DA',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Eléctrica',
-            'abreviatura' => 'IE'
+            'abreviatura' => 'IE',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Electrónica',
-            'abreviatura' => 'IEE'
+            'abreviatura' => 'IEE',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Ingeniería Idustrial',
-            'abreviatura' => 'II'
+            'abreviatura' => 'II',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Ingeniería Química',
-            'abreviatura' => 'IQ'
+            'abreviatura' => 'IQ',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Metal Mecánica',
-            'abreviatura' => 'IM'
+            'abreviatura' => 'IM',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Sistemas y Computación',
-            'abreviatura' => 'SC'
+            'abreviatura' => 'SC',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'División de Estudios de Posgrado e Investigación',
-            'abreviatura' => 'DEPI'
+            'abreviatura' => 'DEPI',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'División de Estudios Profesionales',
-            'abreviatura' => 'DEP'
+            'abreviatura' => 'DEP',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Comunicación y Difusión',
-            'abreviatura' => 'CD'
+            'abreviatura' => 'CD',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Recursos Humanos',
-            'abreviatura' => 'RH'
+            'abreviatura' => 'RH',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Mantenimiento y Equipo',
-            'abreviatura' => 'ME'
+            'abreviatura' => 'ME',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Recursos Financieros',
-            'abreviatura' => 'RF'
+            'abreviatura' => 'RF',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Recursos Materiales y Servicios',
-            'abreviatura' => 'RMS'
+            'abreviatura' => 'RMS',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Actividades Extraescolares',
-            'abreviatura' => 'DAE'
+            'abreviatura' => 'DAE',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Gestión Tecnológica y Vinculación',
-            'abreviatura' => 'GTV'
+            'abreviatura' => 'GTV',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Planeación Programación y Presupuestación',
-            'abreviatura' => 'PPP'
+            'abreviatura' => 'PPP',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Servicios Escolares',
-            'abreviatura' => 'SE'
+            'abreviatura' => 'SE',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Departamento de Centro de Cómputo',
-            'abreviatura' => 'CC'
+            'abreviatura' => 'CC',
+            'folio' => 1
         ]);
         Departamento::create([
             'nombre' => 'Sindicato',
-            'abreviatura' => 'SIND'
+            'abreviatura' => 'SIND',
+            'folio' => 1
         ]);
     }
 }

@@ -87,7 +87,7 @@
     
     <div class="numero_orden" style="margin-bottom: 10px;">
         <div class="bold" style="text-align: right;">
-            Número de orden: {{ str_pad($respuesta->folio, 3, '0', STR_PAD_LEFT) }}
+            Número de orden: CC/{{ str_pad($respuesta->folio, 3, '0', STR_PAD_LEFT) }}
         </div>
 
     </div>
@@ -140,7 +140,7 @@
             <td colspan="2" class="bold">Departamento: {{ $respuesta->solicitud->user->departamento->nombre}}</td>
         </tr>
         <tr>
-            <td colspan="2" class="bold">Folio I: {{ str_pad($respuesta->folio, 3, '0', STR_PAD_LEFT) }}</td>
+            <td colspan="2" class="bold">Folio I: CC/{{ str_pad($respuesta->folio, 3, '0', STR_PAD_LEFT) }}</td>
         </tr>
         <tr style="border-top: 1px solid black;">
             <td class="bold" style="width: 50%;">Verificado y Liberado por: {{ $respuesta['nombreVerifico'] }}</td>

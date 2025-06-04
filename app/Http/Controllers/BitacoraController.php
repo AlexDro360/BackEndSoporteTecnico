@@ -17,7 +17,7 @@ class BitacoraController extends Controller
     {
         $perPage = $request->input('perPage', 10);
 
-        $bitacoras = Bitacora::with('solicitud')->paginate($perPage);
+        $bitacoras = Bitacora::with('solicitud.user.departamento')->paginate($perPage);
         if ($bitacoras->isEmpty()) {
             return response()->json(['message' => 'No hay bitacoras'], 404);
         }
@@ -52,7 +52,7 @@ class BitacoraController extends Controller
 
         $solicitud = Solicitud::with('personalAtencion')->findOrFail($request->idSolicitud);
 
-        $solicitud->update(['idEstado' => 4]);
+        $solicitud->update(['idEstado' => 5]);
 
         $ids = $solicitud->personalAtencion->pluck('id');
         User::whereIn('id', $ids)->update(['disponibilidad' => true]);
@@ -75,7 +75,7 @@ class BitacoraController extends Controller
 
     public function getBitacora(string $id)
     {
-        $bitacora = Bitacora::with('solicitud')->where('idSolicitud', '=', $id)->first();
+        $bitacora = Bitacora::with('solicitud.user.departamento')->where('idSolicitud', '=', $id)->first();
 
         if (!$bitacora) {
             return response()->json(null, 200);

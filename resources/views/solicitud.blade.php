@@ -91,7 +91,7 @@
     </div>
 
     <div class="bold" style="width: 250px; margin-left: auto; text-align: center; margin-bottom: 20px">
-        Folio: <p style="display: inline; margin-left: 10px">{{ str_pad($solicitud->folio, 3, '0', STR_PAD_LEFT) }}</p>
+        Folio: <p style="display: inline; margin-left: 10px">{{$solicitud->user->departamento->abreviatura}}/{{ str_pad($solicitud->folio, 3, '0', STR_PAD_LEFT) }}</p>
     </div>
 </div>
 
