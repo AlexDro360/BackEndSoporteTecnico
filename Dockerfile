@@ -1,7 +1,7 @@
 FROM php:8.2-fpm
 
 RUN apt-get update && apt-get install -y \
-    zip unzip git curl libpng-dev libjpeg-dev libfreetype6-dev \
+    zip unzip git curl libpng-dev libjpeg-dev libfreetype6-dev nginx \
     && docker-php-ext-install pdo_mysql gd
 
 WORKDIR /var/www
@@ -15,3 +15,9 @@ COPY . .
 RUN php artisan package:discover --ansi
 
 RUN chown -R www-data:www-data /var/www
+
+COPY nginx-backend.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]
