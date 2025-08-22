@@ -92,29 +92,29 @@ class PermissionsDemoSeeder extends Seeder
         $user->assignRole($role3);
 
 
-        $tecnicos = \App\Models\User::factory()->count(3)->create([
-            'password' => bcrypt('12345678'),
-            'role_id' => 2,
-            'departamento_id' => 10,
-            'status' => true,
-            'disponibilidad' => true,
-        ]);
+        // $tecnicos = \App\Models\User::factory()->count(3)->create([
+        //     'password' => bcrypt('12345678'),
+        //     'role_id' => 2,
+        //     'departamento_id' => 10,
+        //     'status' => true,
+        //     'disponibilidad' => true,
+        // ]);
 
-        $userJD = \App\Models\User::factory()->count(50)->create([
-            'password' => bcrypt('12345678'),
-            'role_id' => 3,
-            'status' => true,
-            'disponibilidad' => true,
-            'departamento_id' => 1,
-        ])->each(function ($user) {
-            $user->update([
-                'departamento_id' => rand(1, 27),
-            ]);
-        });
+        // $userJD = \App\Models\User::factory()->count(50)->create([
+        //     'password' => bcrypt('12345678'),
+        //     'role_id' => 3,
+        //     'status' => true,
+        //     'disponibilidad' => true,
+        //     'departamento_id' => 1,
+        // ])->each(function ($user) {
+        //     $user->update([
+        //         'departamento_id' => rand(1, 27),
+        //     ]);
+        // });
 
 
-        foreach ($tecnicos as $tecnico) {
-            $tecnico->assignRole($roleTecnico);
-        }
+        // foreach ($tecnicos as $tecnico) {
+        //     $tecnico->assignRole($roleTecnico);
+        // }
     }
 }
