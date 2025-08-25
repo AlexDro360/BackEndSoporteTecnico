@@ -11,9 +11,16 @@ class CentroComputoJefeController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
+        $search = $request->get("search");
+        $perPage = $request->input('perPage', 10);
 
-        $jefes = CentroComputoJefe::orderBy('created_at', 'desc')->paginate($perPage);
+        $jefes = CentroComputoJefe::when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nombres', 'like', "%{$search}%")
+                ->orWhere('apellidoP', 'like', "%{$search}%")
+                ->orWhere('apellidoM', 'like', "%{$search}%");
+            });
+        })->orderBy('created_at', 'desc')->paginate($perPage);
 
         return response()->json($jefes, 200);
     }
