@@ -13,6 +13,6 @@ class configAdicionales extends Seeder
      */
     public function run(): void
     {
-        ModelsConfigAdicionales::create(['FolioRespuesta' => '1', 'FolioSolicitud' => '1']);
+        ModelsConfigAdicionales::create(['FolioRespuesta' => '1']);
     }
 }

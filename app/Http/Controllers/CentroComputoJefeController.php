@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreJefeRequest;
 use App\Models\CentroComputoJefe;
+use DB;
 use Illuminate\Http\Request;
 
 class CentroComputoJefeController extends Controller
@@ -27,18 +29,14 @@ class CentroComputoJefeController extends Controller
         return response()->json($jefe, 200);
     }
 
-    public function store(Request $request)
+    public function store(StoreJefeRequest $request)
     {
-        $validated = $request->validate([
-            'nombres'    => 'required|string|max:50',
-            'apellidoP'  => 'required|string|max:50',
-            'apellidoM'  => 'required|string|max:50',
-        ]);
-
-        CentroComputoJefe::where('estado', true)->update(['estado' => false]);
-
-        $validated['estado'] = true;
-        $jefe = CentroComputoJefe::create($validated);
+        $validated = $request->validated();
+        $jefe = DB::transaction(function () use ($validated) {
+            CentroComputoJefe::where('estado', true)->update(['estado' => false]);
+            $validated['estado'] = true;
+            return CentroComputoJefe::create($validated);
+        });
         return response()->json($jefe, 201);
     }
 
@@ -55,26 +53,22 @@ class CentroComputoJefeController extends Controller
 
     public function update(Request $request, $id)
     {
-        $jefe = CentroComputoJefe::find($id);
+        $jefe = CentroComputoJefe::findOrFail($id);
 
-        if (!$jefe) {
-            return response()->json(['message' => 'Jefe no encontrado'], 404);
-        }
+        $validated = $request->validated();
 
-        $validated = $request->validate([
-            'nombres'    => 'sometimes|string|max:50',
-            'apellidoP'  => 'sometimes|string|max:50',
-            'apellidoM'  => 'sometimes|string|max:50',
-            'estado'     => 'sometimes|boolean',
-        ]);
+        $jefe = DB::transaction(function () use ($jefe, $validated) {
 
-        if ($request->estado && $request->estado != $jefe->estado) {
-            CentroComputoJefe::where('estado', true)->update(['estado' => false]);
-        }
+            if (isset($validated['estado']) && $validated['estado'] && $validated['estado'] != $jefe->estado) {
+                CentroComputoJefe::where('estado', true)->update(['estado' => false]);
+            }
 
-        $jefe->update($validated);
+            $jefe->update($validated);
 
-        return response()->json($jefe);
+            return $jefe;
+        });
+
+        return response()->json($jefe, 200);
     }
 
     public function destroy($id)
@@ -85,9 +79,8 @@ class CentroComputoJefeController extends Controller
             return response()->json(['message' => 'Jefe no encontrado'], 404);
         }
 
-        $jefe->estado = false;
-        $jefe->save();
+        $jefe->update(['estado' => false]);
 
-        return response()->json(['message' => 'Jefe dado de baja correctamente']);
+        return response()->json(['message' => 'Jefe dado de baja correctamente'], 200);
     }
 }

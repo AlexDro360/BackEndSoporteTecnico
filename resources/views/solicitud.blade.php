@@ -91,7 +91,7 @@
     </div>
 
     <div class="bold" style="width: 250px; margin-left: auto; text-align: center; margin-bottom: 20px">
-        Folio: <p style="display: inline; margin-left: 10px">{{$solicitud->user->departamento->abreviatura}}/{{ str_pad($solicitud->folio, 3, '0', STR_PAD_LEFT) }}</p>
+        Folio: <p style="display: inline; margin-left: 10px">{{$data->user->departamento->abreviatura}}/{{ str_pad($data->folio, 3, '0', STR_PAD_LEFT) }}</p>
     </div>
 </div>
 
@@ -100,7 +100,7 @@
         <tr>
             <td style="padding-bottom: 15px; padding-top: 15px">
                 <p class="bold" style="display: inline">Área Solicitante:</p> 
-                <p style="display: inline; margin-left: 10px">{{ $solicitud->user->departamento->nombre }}</p>
+                <p style="display: inline; margin-left: 10px">{{ $data->user->departamento->nombre }}</p>
             </td>
         </tr>
     </table>
@@ -109,13 +109,13 @@
     <tr style="border-top: 1px solid black;">
         <td style="padding-bottom: 15px; padding-top: 15px">
             <p class="bold" style="display: inline;">Nombre y Firma del Solicitante:</p>
-            <p style="display: inline; margin-left: 10px">{{ $solicitud->user->name }} {{ $solicitud->user->surnameP }} {{ $solicitud->user->surnameM }}</p>
+            <p style="display: inline; margin-left: 10px">{{ $data->user->name }} {{ $data->user->surnameP }} {{ $data->user->surnameM }}</p>
         </td>
     </tr>
     <tr style="border-top: 1px solid black;">
         <td style="padding-bottom: 15px; padding-top: 15px">
             <p class="bold" style="display: inline;">Fecha de elaboración:</p>
-            <p style="display: inline; margin-left: 10px">{{ $solicitud->created_at }}</p>
+            <p style="display: inline; margin-left: 10px">{{ $data->created_at }}</p>
         </td>
     </tr>
     <tr style="border-top: 1px solid black;">
@@ -125,7 +125,7 @@
     </tr>
     <tr style="border-top: 1px solid black;">
         <td style="height: 300px">
-            <p style="margin: 0;">{{ $solicitud->descripcionUser }}</p>
+            <p style="margin: 0;">{{ $data->descripcionUser }}</p>
         </td>
     </tr>
 </table>

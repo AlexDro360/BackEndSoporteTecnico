@@ -18,6 +18,7 @@ class Respuesta extends Model
         'idTipoMantenimiento',
         'idTipoServicio',
         'idSolicitud',
+        'path_pdf'
     ];
 
     public function tipoServicio(){

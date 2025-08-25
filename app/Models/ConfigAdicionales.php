@@ -10,7 +10,6 @@ class ConfigAdicionales extends Model
     use HasFactory;
 
     protected $fillable = [
-        'FolioSolicitud',
         'FolioRespuesta',
     ];
 }

@@ -201,4 +201,15 @@ class UserAccessController extends Controller
             "message_text" => "Usuario desactivado correctamente"
         ]);
     }
+    public function alta(string $id)
+    {
+        $user = User::findOrFail($id);
+
+        $user->update(['status' => 1]);
+
+        return response()->json([
+            "message" => 200,
+            "message_text" => "Usuario activado correctamente"
+        ]);
+    }
 }

@@ -55,6 +55,20 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
+        
+        'pdfsRespuestas' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/pdfs/respuestas'),
+            'url' => env('APP_URL').'/storage/respuestas',
+            'throw' => false,
+        ],
+
+        'pdfsSolicitudes' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/pdfs//solicitudes'),
+            'url' => env('APP_URL').'/storage/solicitudues',
+            'throw' => false,
+        ]
 
     ],
 

@@ -10,7 +10,6 @@ class AtencionSolicitud extends Model
     use HasFactory;
 
     protected $fillable = [
-        'fechaAtencion',
-        'horaAtencion',
+        'estado'
     ];
 }

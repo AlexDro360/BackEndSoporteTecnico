@@ -15,14 +15,9 @@ class Solicitud extends Model
         'idUser',
         'folio',
         'descripcionUser',
-        'fechaAsignacion',
-        'fechaRevision',
-        'descripcionFalla',
-        'fechaSolucion',
-        'descripcionSolucion',
-        'descripcionRechazo',
         'idTipo',
         'idEstado',
+        'path_pdf'
     ];
 
     public function user()
@@ -55,7 +50,7 @@ class Solicitud extends Model
     public function personalAtencion()
     {
         return $this->belongsToMany(User::class, 'atencion_solicituds')
-            ->withPivot('fechaAtencion', 'horaAtencion')
+            ->withPivot('estado')
             ->withTimestamps();;
     }
 }

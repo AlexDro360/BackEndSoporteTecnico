@@ -2,73 +2,66 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRespuestaRequest;
+use App\Http\Requests\UpdateRespuestaRequest;
 use App\Models\ConfigAdicionales;
 use App\Models\Departamento;
 use App\Models\Respuesta;
 use App\Models\Solicitud;
+use App\Services\PdfService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Barryvdh\DomPDF\PDF as DomPDFPDF;
 use DB;
+use Storage;
 
 class RespuestaController extends Controller
 {
+    protected $pdfService;
+
+    public function __construct(PdfService $pdfService)
+    {
+        $this->pdfService = $pdfService; 
+    }
+
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 10);
 
         $respuestas = Respuesta::with('tipoServicio', 'tipoMantenimiento', 'solicitud')->paginate($perPage);
-        // if ($respuestas->isEmpty()) {
-        //     return response()->json(['message' => 'No hay respuestas'], 404);
-        // }
+        
         return response()->json($respuestas, 200);
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {}
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreRespuestaRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'asunto' => 'required|string|max:100',
-            'descripcion' => 'required|string|max:500',
-            'nombreVerifico' => 'required|string|max:150',
-            'idCentroComputoJefe' => 'required|exists:centro_computo_jefes,id',
-            'idTipoMantenimiento' => 'sometimes|exists:tipo_mantenimientos,id',
-            'idTipoServicio' => 'sometimes|exists:tipo_servicios,id',
-            'idSolicitud' => 'required|exists:solicituds,id',
-        ]);
+        $data = $request->validated();
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+        DB::transaction(function () use (&$data, $request) {
 
-        $data = $validator->validated();
-        DB::transaction(function () use (&$data, &$request) {
+            $FolioRespuesta = ConfigAdicionales::lockForUpdate()->first();
 
-            $departamento = Departamento::lockForUpdate()->find(26);
-
-            $data['folio'] = $departamento->folio;
+            $data['folio'] = $FolioRespuesta->FolioRespuesta;
             $data['fecha'] = Carbon::now()->toDateString();
+            
+            $FolioRespuesta->increment('FolioRespuesta');
+            
+            $respuesta = Respuesta::create($data);
+            
+            $urlPdf = $this->pdfService->generarPdf('respuesta',['data' => $respuesta], 'respuesta', 'pdfsRespuestas');
 
-            $departamento->folio ++;
-            $departamento->save();
-
-            Respuesta::create($data);
-
+            $respuesta->update(['path_pdf' => $urlPdf]);
+            
             $solicitud = Solicitud::findOrFail($request->idSolicitud);
             if ($solicitud->idEstado != 2) {
                 $solicitud->update(['idEstado' => 6]);
             }
         });
-
+        
         return response()->json(['message' => 'Respuesta agregada exitosamente'], 201);
     }
 
@@ -98,53 +91,21 @@ class RespuestaController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id) {}
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateRespuestaRequest $request, string $id)
     {
         $respuesta = Respuesta::find($id);
+
         if (!$respuesta) {
             return response()->json(['message' => 'No se encontro la respuesta'], 404);
         }
-        $validator = Validator::make($request->all(), [
-            'asunto' => 'sometimes|string|max:100',
-            'descripcion' => 'sometimes|string|max:500',
-            'nombreVerifico' => 'sometimes|string|max:150',
-            'idCentroComputoJefe' => 'sometimes|exists:centro_computo_jefes,id',
-            'idTipoMantenimiento' => 'sometimes|exists:tipo_mantenimientos,id',
-            'idTipoServicio' => 'sometimes|exists:tipo_servicios,id',
-            'idSolicitud' => 'sometimes|exists:solicituds,id',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
-        }
-        if ($request->has('asunto')) {
-            $respuesta->asunto = $request->asunto;
-        }
-        if ($request->has('descripcion')) {
-            $respuesta->descripcion = $request->descripcion;
-        }
-        if ($request->has('nombreVerifico')) {
-            $respuesta->nombreVerifico = $request->nombreVerifico;
-        }
-        if ($request->has('idtipoMantenimiento')) {
-            $respuesta->idtipoMantenimiento = $request->idtipoMantenimiento;
-        }
-        if ($request->has('idTipoServicio')) {
-            $respuesta->idTipoServicio = $request->idTipoServicio;
-        }
-        if ($request->has('idSolicitud')) {
-            $respuesta->idSolicitud = $request->idSolicitud;
-        }
+        
+        $respuesta->fill($request->validated());
 
-        $respuesta->fecha = Carbon::now()->toDateString();
+        $respuesta->path_pdf = $this->pdfService->generarPdf('respuesta', $respuesta->toArray(), 'respuesta', 'pdfsRespuestas');
 
-        $respuesta->update();
+        $respuesta->save();
 
         return response()->json(['message' => 'Resuesta actualizada exitosamente'], 200);
     }
@@ -162,13 +123,24 @@ class RespuestaController extends Controller
         return response()->json(['message' => 'Respuesta eliminada correctamente'], 200);
     }
 
-    public function generarPDF($id)
+
+
+    public function obtenerPDF($id)
     {
-        $respuesta = Respuesta::with('tipoServicio', 'tipoMantenimiento', 'solicitud.user.departamento', 'solicitud.personalAtencion', 'aprobo')->find($id);
-        if (!$respuesta) {
-            return response()->json(['message' => 'No se encontro la Respuesta'], 404);
+        $respuesta = Respuesta::find($id);
+
+        if(!$respuesta || !Storage::disk('pdfsRespuestas')->exists($respuesta->path_pdf)){
+            return response()->json(['error'=>'Archivo no encontrado'], 404);
         }
-        $pdf = PDF::loadView('respuesta', ['respuesta' => $respuesta]);
-        return $pdf->stream();
+        
+        return response()->file(
+            Storage::disk('pdfsRespuestas')->path($respuesta->path_pdf),
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="Respuesta'.$respuesta->id.'.pdf"'
+            ]
+        );
     }
+
+    
 }

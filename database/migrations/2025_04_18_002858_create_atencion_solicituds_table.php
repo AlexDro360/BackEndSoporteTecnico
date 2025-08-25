@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('solicitud_id')->constrained()->onDelete('cascade');
-            $table->date('fechaAtencion');
-            $table->time('horaAtencion');
+            $table->boolean('estado');
             $table->timestamps();
         });
     }

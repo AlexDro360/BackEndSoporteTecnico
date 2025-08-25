@@ -22,6 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('idTipoMantenimiento')->nullable();
             $table->unsignedBigInteger('idSolicitud'); 
             $table->unsignedBigInteger('idTipoServicio')->nullable();
+            $table->string('path_pdf', 300)->nullable(); 
             
             $table->foreign('idCentroComputoJefe')->references('id')->on('centro_computo_jefes')->onDelete('restrict');
             $table->foreign('idTipoMantenimiento')->references('id')->on('tipo_mantenimientos')->onDelete('restrict'); 

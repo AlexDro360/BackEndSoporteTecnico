@@ -51,7 +51,7 @@
 </head>
 <body>
 
-    {{-- {{dd($respuesta)}} --}}
+    {{-- {{dd($data)}} --}}
     <table class="top-table" style="margin-bottom: 20px;">
         <tr>
 
@@ -87,7 +87,7 @@
     
     <div class="numero_orden" style="margin-bottom: 10px;">
         <div class="bold" style="text-align: right;">
-            Número de orden: CC/{{ str_pad($respuesta->folio, 3, '0', STR_PAD_LEFT) }}
+            Número de orden: CC/{{ str_pad($data->folio, 3, '0', STR_PAD_LEFT) }}
         </div>
 
     </div>
@@ -96,8 +96,8 @@
     <table style="margin-bottom: 40px;">
         <tr>
             <td class="bold">Mantenimiento:</td>
-            <td class="bold">{{ isset($respuesta->tipoMantenimiento) && $respuesta->tipoMantenimiento->nombre === 'Interno' ? 'X Interno' : 'Externo' }}</td>
-            <td class="bold">{{ isset($respuesta->tipoMantenimiento) && $respuesta->tipoMantenimiento->nombre === 'Externo' ? 'X Externo' : 'Interno' }}</td>
+            <td class="bold">{{ isset($data->tipoMantenimiento) && $data->tipoMantenimiento->nombre === 'Interno' ? 'X Interno' : 'Externo' }}</td>
+            <td class="bold">{{ isset($data->tipoMantenimiento) && $data->tipoMantenimiento->nombre === 'Externo' ? 'X Externo' : 'Interno' }}</td>
         </tr>
 
 
@@ -105,15 +105,15 @@
         <tr style="border-top: 1px solid black;">
             <td class="bold">Tipo de servicio:</td>
             <td>
-                {{ isset($respuesta->tipoServicio) ? $respuesta->tipoServicio->nombre : '' }}
+                {{ isset($data->tipoServicio) ? $data->tipoServicio->nombre : '' }}
             </td>
             <td></td>
         </tr>
         <tr style="border-top: 1px solid black;">
             <td class="bold">Asignado a:</td>
             <td>
-                @if(isset($respuesta->solicitud->personalAtencion) && $respuesta->solicitud->personalAtencion->isNotEmpty())
-                    @foreach($respuesta->solicitud->personalAtencion as $persona)
+                @if(isset($data->solicitud->personalAtencion) && $data->solicitud->personalAtencion->isNotEmpty())
+                    @foreach($data->solicitud->personalAtencion as $persona)
                         {{ $persona->name }} {{ $persona->surnameP }} {{ $persona->surnameM }}<br>
                     @endforeach
                 @else
@@ -127,28 +127,28 @@
     
     <table style="margin-bottom: 10px;">
         <tr>
-            <td class="bold" >Fecha de realización: {{ $respuesta['fecha'] }}</td>
+            <td class="bold" >Fecha de realización: {{ $data['fecha'] }}</td>
             <td></td>
         </tr>
         <tr style="border-top: 1px solid black;">
             <td style="height: 100px; vertical-align: top;" colspan="2" class="bold">
-                Trabajo Realizado: {{ $respuesta['descripcion'] }}
+                Trabajo Realizado: {{ $data['descripcion'] }}
             </td>
         </tr>
-        {{-- {{dd($respuesta)}} --}}
+        {{-- {{dd($data)}} --}}
         <tr>
-            <td colspan="2" class="bold">Departamento: {{ $respuesta->solicitud->user->departamento->nombre}}</td>
+            <td colspan="2" class="bold">Departamento: {{ $data->solicitud->user->departamento->nombre}}</td>
         </tr>
         <tr>
-            <td colspan="2" class="bold">Folio I: CC/{{ str_pad($respuesta->folio, 3, '0', STR_PAD_LEFT) }}</td>
+            <td colspan="2" class="bold">Folio I: CC/{{ str_pad($data->folio, 3, '0', STR_PAD_LEFT) }}</td>
         </tr>
         <tr style="border-top: 1px solid black;">
-            <td class="bold" style="width: 50%;">Verificado y Liberado por: {{ $respuesta['nombreVerifico'] }}</td>
-            <td class="bold">Fecha y Firma: {{ $respuesta['fecha'] }}</td>
+            <td class="bold" style="width: 50%;">Verificado y Liberado por: {{ $data['nombreVerifico'] }}</td>
+            <td class="bold">Fecha y Firma: {{ $data['fecha'] }}</td>
         </tr>
         <tr style="border-top: 1px solid black;">
-            <td class="bold" style="width: 50%;">Aprobado por: {{ $respuesta->aprobo->nombreCompleto }}</td>
-            <td class="bold">Fecha y Firma: {{ $respuesta['fecha'] }}</td>
+            <td class="bold" style="width: 50%;">Aprobado por: {{ $data->aprobo->nombreCompleto }}</td>
+            <td class="bold">Fecha y Firma: {{ $data['fecha'] }}</td>
         </tr>
     </table>
     

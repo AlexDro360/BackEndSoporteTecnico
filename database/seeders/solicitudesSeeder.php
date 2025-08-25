@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Estado;
 use App\Models\User;
 use Carbon\Carbon;
 use DB;
@@ -57,8 +58,9 @@ class solicitudesSeeder extends Seeder
                 DB::table('atencion_solicituds')->insert([
                     'user_id' => $techId,
                     'solicitud_id' => $solicitudId,
-                    'fechaAtencion' => $randomDate->format('Y-m-d'),
-                    'horaAtencion' => $randomDate->format('H:i:s'),
+                    // 'fechaAtencion' => $randomDate->format('Y-m-d'),
+                    // 'horaAtencion' => $randomDate->format('H:i:s'),
+                    'estado' => 1,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

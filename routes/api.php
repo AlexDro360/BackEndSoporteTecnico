@@ -51,6 +51,7 @@ Route::group([
     Route::resource("roles", RolePermissionController::class);
     Route::post('/users/{id}', [UserAccessController::class, 'update']);
     Route::get("users/config", [UserAccessController::class, 'config']);
+    Route::get('/users/alta/{id}', [UserAccessController::class, 'alta']);
     Route::resource("users", UserAccessController::class);
 
     Route::post('/solicitudes/{id}', [UserAccessController::class, 'update']);
@@ -130,5 +131,5 @@ Route::get('tipomantenimientos', [TipoMantenimientoController::class, 'index']);
 Route::get('tiposervicios', [TipoServicioController::class, 'index']);
 Route::get('departamentos', 'App\Http\Controllers\DepartamentoController@index');
 
-Route::get('/pdf/{id}', [RespuestaController::class, 'generarPDF']);
-Route::get('/solicitud/pdf/{id}', [SolicitudController::class, 'generarPDF']);
+Route::get('pdf/respuesta/{id}', [RespuestaController::class, 'obtenerPDF']);
+Route::get('pdf/solicitud/{id}', [SolicitudController::class, 'obtenerPDF']);

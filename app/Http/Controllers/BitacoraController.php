@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBitacoraRequest;
+use App\Http\Requests\UpdateBitacoraRequest;
 use App\Models\Bitacora;
 use App\Models\Solicitud;
 use App\Models\User;
 use Carbon\Carbon;
+use DB;
 use Illuminate\Http\Request;
 use Validator;
 
@@ -15,9 +18,18 @@ class BitacoraController extends Controller
 
     public function index(Request $request)
     {
+        $search = $request->get("search");
         $perPage = $request->input('perPage', 10);
 
-        $bitacoras = Bitacora::with('solicitud.user.departamento')->paginate($perPage);
+        $bitacoras = Bitacora::with('solicitud.user.departamento')
+            ->when($search, function ($query) use ($search) {
+                $query->whereHas("solicitud", function ($q) use ($search) {
+                    $q->where("folio", "like", "%{$search}%");
+                });
+            })
+            ->orderByDesc("id")
+            ->paginate($perPage);
+
         if ($bitacoras->isEmpty()) {
             return response()->json(['message' => 'No hay bitacoras'], 404);
         }
@@ -25,39 +37,24 @@ class BitacoraController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create() {}
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreBitacoraRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'descFalla' => 'required|string|max:200',
-            'descSolucion' => 'required|string|max:200',
-            'materialReq' => 'required|string|max:200',
-            'duracion' => 'required|integer|min:1',
-            'idSolicitud' => 'required|exists:solicituds,id',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
-        }
 
-        $data = $validator->validated();
-        $data['fecha'] = Carbon::now()->toDateString();
+        DB::transaction(function () use ($request) {
+            $data = $request->validated();
+            $data['fecha'] = Carbon::now()->toDateString();
 
-        Bitacora::create($data);
+            Bitacora::create($data);
 
-        $solicitud = Solicitud::with('personalAtencion')->findOrFail($request->idSolicitud);
+            $solicitud = Solicitud::with('personalAtencion')->findOrFail($request->idSolicitud);
+            $solicitud->update(['idEstado' => 5]);
 
-        $solicitud->update(['idEstado' => 5]);
-
-        $ids = $solicitud->personalAtencion->pluck('id');
-        User::whereIn('id', $ids)->update(['disponibilidad' => true]);
-
-        return response()->json(['message' => 'Bitacora agregada exitosamente'], 201);
+            $ids = $solicitud->personalAtencion->pluck('id');
+            User::whereIn('id', $ids)->update(['disponibilidad' => true]);
+        });
+        return response()->json(['message'   => 'Bitácora agregada exitosamente',], 201);
     }
 
     /**
@@ -65,7 +62,6 @@ class BitacoraController extends Controller
      */
     public function show(string $id)
     {
-
         $bitacoras = Bitacora::with('solicitud')->find($id);
         if (!$bitacoras) {
             return response()->json(['message' => 'No se encontro la bitácora'], 404);
@@ -86,50 +82,20 @@ class BitacoraController extends Controller
 
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id) {}
-
-    /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateBitacoraRequest $request, string $id)
     {
         $bitacora = Bitacora::find($id);
         if (!$bitacora) {
             return response()->json(['message' => 'No se encontro la bitacora'], 404);
         }
-        $validator = Validator::make($request->all(), [
-            'descFalla' => 'sometimes|string|max:200',
-            'descSolucion' => 'sometimes|string|max:200',
-            'materialReq' => 'sometimes|string|max:200',
-            'duracion' => 'sometimes|integer|min:1',
-            'idSolicitud' => 'sometimes|exists:solicituds,id',
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 422);
-        }
-        if ($request->has('descFalla')) {
-            $bitacora->descFalla = $request->descFalla;
-        }
-        if ($request->has('descSolucion')) {
-            $bitacora->descSolucion = $request->descSolucion;
-        }
-        if ($request->has('materialReq')) {
-            $bitacora->materialReq = $request->materialReq;
-        }
-        if ($request->has('duracion')) {
-            $bitacora->duracion = $request->duracion;
-        }
-        if ($request->has('idSolicitud')) {
-            $bitacora->idSolicitud = $request->idSolicitud;
-        }
 
-        $bitacora->fecha = Carbon::now()->toDateString();
+        $bitacora->fill($request->validated());
+        $bitacora->fecha = now()->toDateString();
+        $bitacora->save();
 
-        $bitacora->update();
-
-        return response()->json(['message' => 'Bitacora actualizada exitosamente'], 200);
+        return response()->json(['message' => 'Bitácora actualizada exitosamente'], 200);
     }
 
     /**

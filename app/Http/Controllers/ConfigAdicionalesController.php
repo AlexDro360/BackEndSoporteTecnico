@@ -16,16 +16,17 @@ class ConfigAdicionalesController extends Controller
         $perPage = $request->input('perPage', 10);
 
         $folios = Departamento::where("nombre", "like", "%" . $search . "%")->paginate($perPage);
+
         return response()->json($folios);
     }
 
     public function resetFolioSolicitud(string $id)
     {
-        $config = Departamento::find($id);
-        $config->folio = 1;
-        $config->save();
+        $depto = Departamento::find($id);
 
-        return response()->json(['message' => 'Folio de solicitud reiniciado correctamente', 'data' => $config]);
+        $depto->update(['folio' => 1]);
+
+        return response()->json(['message' => 'Folio de solicitud reiniciado correctamente', 'data' => $depto]);
     }
 
     public function resetFolioRespuesta(string $id)
@@ -44,12 +45,13 @@ class ConfigAdicionalesController extends Controller
             'folio' => 'nullable|integer|min:0',
         ]);
 
-        $config = Departamento::find($id);
-        $config->update([
-            'folio' => $request->input('folio', $config->folio),
+        $depto = Departamento::find($id);
+
+        $depto->update([
+            'folio' => $request->input('folio', $depto->folio),
         ]);
 
-        return response()->json(['message' => 'Folios actualizados correctamente', 'data' => $config]);
+        return response()->json(['message' => 'Folios actualizados correctamente', 'data' => $depto]);
     }
 
     public function getEstatus()
