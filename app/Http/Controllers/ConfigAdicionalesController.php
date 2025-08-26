@@ -31,9 +31,19 @@ class ConfigAdicionalesController extends Controller
 
     public function resetFolioRespuesta(string $id)
     {
-        $config = Departamento::where('abreviatura');
-        $config->folio = 1;
+        $config = ConfigAdicionales::first();
+        $config->FolioRespuesta = 1;
         $config->save();
+
+        return response()->json(['message' => 'Folio de respuesta reiniciado correctamente', 'data' => $config]);
+    }
+    public function EditFolioRespuesta(Request $request)
+    {
+         $request->validate([
+            'folio' => 'nullable|integer|min:0',
+        ]);
+        $config = ConfigAdicionales::first();
+        $config->update(['FolioRespuesta'=> $request->input('folio', $config->FolioRespuesta)]);
 
         return response()->json(['message' => 'Folio de respuesta reiniciado correctamente', 'data' => $config]);
     }

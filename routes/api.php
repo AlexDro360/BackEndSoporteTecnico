@@ -106,7 +106,8 @@ Route::group([
 ], function ($router) {
     Route::get('/folios', [ConfigAdicionalesController::class, 'show']);
     Route::post('/folios/reiniciar/{id}', [ConfigAdicionalesController::class, 'resetFolioSolicitud']);
-    // Route::post('/folios/reset/respuesta/{id}', [ConfigAdicionalesController::class, 'resetFolioRespuesta']);
+    Route::put('/folios/reset/respuesta', [ConfigAdicionalesController::class, 'resetFolioRespuesta']);
+    Route::put('/folios/update/respuesta', [ConfigAdicionalesController::class, 'EditFolioRespuesta']);
     Route::put('/folios/actualizar/{id}', [ConfigAdicionalesController::class, 'updateFolios']);
     Route::get('/estatus', [ConfigAdicionalesController::class, 'getEstatus']);
 });
