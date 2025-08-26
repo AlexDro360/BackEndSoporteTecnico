@@ -96,8 +96,8 @@
     <table style="margin-bottom: 40px;">
         <tr>
             <td class="bold">Mantenimiento:</td>
-            <td class="bold">{{ isset($data->tipoMantenimiento) && $data->tipoMantenimiento->nombre === 'Interno' ? 'X Interno' : 'Externo' }}</td>
-            <td class="bold">{{ isset($data->tipoMantenimiento) && $data->tipoMantenimiento->nombre === 'Externo' ? 'X Externo' : 'Interno' }}</td>
+            <td class="bold">{{ isset($data->tipoMantenimiento) && $data->tipoMantenimiento->nombre === 'Interno' ? 'X Interno' : 'Interno' }}</td>
+            <td class="bold">{{ isset($data->tipoMantenimiento) && $data->tipoMantenimiento->nombre === 'Externo' ? 'X Externo' : 'Externo' }}</td>
         </tr>
 
 
