@@ -9,6 +9,7 @@ class ConfigAdicionales extends Model
 {
     use HasFactory;
 
+    protected $table = 'config_adicionales'; 
     protected $fillable = [
         'FolioRespuesta',
     ];

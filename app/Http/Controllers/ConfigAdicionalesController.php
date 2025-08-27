@@ -29,25 +29,60 @@ class ConfigAdicionalesController extends Controller
         return response()->json(['message' => 'Folio de solicitud reiniciado correctamente', 'data' => $depto]);
     }
 
-    public function resetFolioRespuesta(string $id)
-    {
-        $config = ConfigAdicionales::first();
-        $config->FolioRespuesta = 1;
-        $config->save();
 
-        return response()->json(['message' => 'Folio de respuesta reiniciado correctamente', 'data' => $config]);
-    }
     public function EditFolioRespuesta(Request $request)
     {
-         $request->validate([
+        $request->validate([
             'folio' => 'nullable|integer|min:0',
         ]);
         $config = ConfigAdicionales::first();
-        $config->update(['FolioRespuesta'=> $request->input('folio', $config->FolioRespuesta)]);
+        $config->update(['FolioRespuesta' => $request->input('folio', $config->FolioRespuesta)]);
 
         return response()->json(['message' => 'Folio de respuesta reiniciado correctamente', 'data' => $config]);
     }
 
+    public function updateFolioRespuesta(Request $request)
+{
+    try {
+        $config = ConfigAdicionales::first(); // O busca por ID si es por registro específico
+
+        if (!$config) {
+            return response()->json(['error' => 'No se encontró configuración'], 404);
+        }
+
+        $config->FolioRespuesta = $request->FolioRespuesta;
+        $config->save();
+
+        return response()->json(['message' => 'Folio de respuesta actualizado correctamente']);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+public function resetFolioRespuesta()
+    {
+        try {
+            $config = ConfigAdicionales::first(); // busca la primera configuración, cambia si usas ID
+
+            if (!$config) {
+                return response()->json(['error' => 'No se encontró configuración'], 404);
+            }
+
+            $config->FolioRespuesta = 0; // resetea a 0 (o al valor que quieras)
+            $config->save();
+
+            return response()->json([
+                'message' => 'Folio de respuesta reseteado correctamente',
+                'folio_respuesta' => $config->FolioRespuesta
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function updateFolios(Request $request, string $id)
     {
@@ -69,4 +104,28 @@ class ConfigAdicionalesController extends Controller
         $estatus = Estado::all();
         return response()->json($estatus, 200);
     }
+    public function getFolioRespuesta()
+    {
+        try {
+            // Buscar el primer registro de la tabla config_adicionales
+            $config = ConfigAdicionales::first();
+
+            if (!$config) {
+                return response()->json([
+                    'error' => 'No se encontró la configuración'
+                ], 404);
+            }
+
+            return response()->json([
+                'folio_respuesta' => $config->FolioRespuesta // o $config->folio_respuesta si tu columna está en snake_case
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Error al obtener el folio',
+                'detalle' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
