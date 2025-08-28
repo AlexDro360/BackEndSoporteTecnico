@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             TipoMantenimientoSeeder::class,
             TipoServicioSeeder::class,
             configAdicionales::class,
-            UsersSeederSeeder::class
+            UsersSeeder::class
             // solicitudesSeeder::class,
         ]);
     }

@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 
 
-class UsersSeederSeeder extends Seeder
+class UsersSeeder extends Seeder
 {
     /**
      * Create the initial roles and permissions.
