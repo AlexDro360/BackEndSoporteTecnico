@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreJefeRequest;
+use App\Http\Requests\UpdateJefeRequest;
 use App\Models\CentroComputoJefe;
 use DB;
 use Illuminate\Http\Request;
@@ -58,7 +59,7 @@ class CentroComputoJefeController extends Controller
         return response()->json($jefe);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateJefeRequest $request, $id)
     {
         $jefe = CentroComputoJefe::findOrFail($id);
 
