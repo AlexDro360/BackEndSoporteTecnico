@@ -104,13 +104,14 @@ class RolePermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy2(string $id)
     {
         //Ocupe las politicas de los roles
         //$this->authorize('delete', Role::class);
         
         $role = Role::findOrFail($id);
-
+        
+        
         $role->delete();
 
         return response()->json([
@@ -118,4 +119,24 @@ class RolePermissionController extends Controller
 
         ]);
     }
+
+    public function destroy(string $id)
+{
+    $role = Role::findOrFail($id);
+
+    if ($role->users()->count() > 0) {
+        return response()->json([
+            "status" => 300, // 👈 lo mandamos en el JSON
+            "message" => "El rol no se eliminó porque tiene usuarios asignados."
+        ], 200); // siempre devuelvo 200 como HTTP para que Angular lo capture sin error
+    }
+
+    $role->delete();
+
+    return response()->json([
+        "status" => 200, // 👈 lo mandamos en el JSON
+        "message" => "Rol eliminado correctamente."
+    ], 200);
+}
+
 }
