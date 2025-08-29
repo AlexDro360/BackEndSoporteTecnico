@@ -309,6 +309,7 @@ $user17->assignRole($rolJefeCC);
 ]);
 $user18->assignRole($rolJefeCC);
 
+
 $user19 = \App\Models\User::factory()->create([
     'name' => 'Isabel',
     'surnameP' => 'Vega',
