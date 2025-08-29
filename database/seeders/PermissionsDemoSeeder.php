@@ -90,12 +90,12 @@ class PermissionsDemoSeeder extends Seeder
         ]);
 
         $roleTecnico = Role::create(['guard_name' => 'api', 'name' => 'Técnico']);
-        $rolJefeCC = Role::create(['guard_name' => 'api', 'name' => 'Jefe Depto.']);
-        $rolJefeCC->givePermissionTo([
-           'view_my_solicitudes',
-            'register_my_solicitudes',
-            'view_response_my_solicitudes'
-        ]);
+        // $rolJefeCC = Role::create(['guard_name' => 'api', 'name' => 'Jefe Depto.']);
+        // $rolJefeCC->givePermissionTo([
+        //    'view_my_solicitudes',
+        //     'register_my_solicitudes',
+        //     'view_response_my_solicitudes'
+        // ]);
         // gets all permissions via Gate::before rule; see AuthServiceProvider
 
         // create demo users
