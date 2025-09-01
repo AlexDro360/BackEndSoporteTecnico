@@ -54,15 +54,48 @@ class PermissionsDemoSeeder extends Seeder
         Permission::create(['guard_name' => 'api', 'name' => 'view_dashboard']);
 
         $role3 = Role::create(['guard_name' => 'api', 'name' => 'Super-Admin']);
+        $role3->givePermissionTo([
+            'view_role',
+            'register_role',
+            'edit_role',
+            'delete_role',
 
-        $roleTecnico = Role::create(['guard_name' => 'api', 'name' => 'Técnico']);
-        $rolJefeCC = Role::create(['guard_name' => 'api', 'name' => 'Jefe Depto.']);
-        $rolJefeCC->givePermissionTo([
             'view_user',
             'register_user',
             'edit_user',
             'delete_user',
+
+            'view_solicitud',
+            'register_solicitud',
+            'asign_tecnico',
+            'decline_solicitud',
+            'response_solicitud',
+            'register_bitacora_solicitud',
+            
+            'view_bitacora',
+            'edit_bitacora',
+
+            'view_extra',
+            'add_Jefe',
+            'reload_folio_respuesta',
+            'edit_folio_respuesta',
+            'reload_folio_solicitud',
+            'edit_folio_solicitud',
+
+            'view_my_solicitudes',
+            'register_my_solicitudes',
+            'view_response_my_solicitudes',
+
+            'view_dashboard'
         ]);
+
+        $roleTecnico = Role::create(['guard_name' => 'api', 'name' => 'Técnico']);
+        // $rolJefeCC = Role::create(['guard_name' => 'api', 'name' => 'Jefe Depto.']);
+        // $rolJefeCC->givePermissionTo([
+        //    'view_my_solicitudes',
+        //     'register_my_solicitudes',
+        //     'view_response_my_solicitudes'
+        // ]);
         // gets all permissions via Gate::before rule; see AuthServiceProvider
 
         // create demo users
