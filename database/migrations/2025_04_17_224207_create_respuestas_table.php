@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('respuestas', function (Blueprint $table) {
             $table->id();
-            $table->string('asunto', 100); 
-            $table->string('descripcion', 500); 
+            $table->string('asunto', 200); 
+            $table->string('descripcion', 800); 
             $table->dateTime('fecha');
             $table->string('nombreVerifico', 150); 
             $table->integer('folio');
