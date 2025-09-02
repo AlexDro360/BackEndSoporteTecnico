@@ -89,9 +89,9 @@ class PermissionsDemoSeeder extends Seeder
             'view_dashboard'
         ]);
 
-        $roleTecnico = Role::create(['guard_name' => 'api', 'name' => 'Técnico']);
-        // $rolJefeCC = Role::create(['guard_name' => 'api', 'name' => 'Jefe Depto.']);
-        // $rolJefeCC->givePermissionTo([
+        //$roleTecnico = Role::create(['guard_name' => 'api', 'name' => 'Técnico']);
+        // $rolJefeDept = Role::create(['guard_name' => 'api', 'name' => 'Jefe Depto.']);
+        // $rolJefeDept->givePermissionTo([
         //    'view_my_solicitudes',
         //     'register_my_solicitudes',
         //     'view_response_my_solicitudes'

@@ -16,28 +16,28 @@ class UsersSeeder extends Seeder
     public function run()
     {
 
-        $rolJefeCC = Role::create(['guard_name' => 'api', 'name' => 'Jefe Depto.']);
-        $rolJefeCC->givePermissionTo([
+
+        
+        $rolTecnico = Role::create(['guard_name' => 'api', 'name' => 'Tecnico']);
+        $rolTecnico->givePermissionTo([
+
+        ]);
+
+        $rolJefeDept = Role::create(['guard_name' => 'api', 'name' => 'Jefe Depto.']);
+        $rolJefeDept->givePermissionTo([
            'view_my_solicitudes',
             'register_my_solicitudes',
             'view_response_my_solicitudes'
         ]);
 
- $user1 = \App\Models\User::factory()->create([
-    'name' => 'JefeCC',
-    'surnameP' => 'computo',
-    'surnameM' => 'tecnm',
-    'email' => 'jefecc@mail.com',
-    'password' => bcrypt('Temporal2025'),
-    'phone' => '5550000020',
-    'role_id' => 4,
-    'departamento_id' => 26,
-    'num_empleado' => '1000',
-    'avatar' => '',
-    'status' => 1,
-    'disponibilidad' => 1,
-]);
-$user1->assignRole($rolJefeCC);
+        $rolJefedeCC = Role::create(['guard_name' => 'api', 'name' => 'Jefe CC']);
+        $rolJefedeCC->givePermissionTo([
+
+        ]);
+
+
+
+
  $user2 = \App\Models\User::factory()->create([
     'name' => 'tecnico1',
     'surnameP' => 'ito',
@@ -52,7 +52,7 @@ $user1->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user2->assignRole($rolJefeCC);
+$user2->assignRole($rolTecnico);
 
  $user3 = \App\Models\User::factory()->create([
     'name' => 'tecnico2',
@@ -68,7 +68,7 @@ $user2->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user3->assignRole($rolJefeCC);
+$user3->assignRole($rolTecnico);
 
  $user4 = \App\Models\User::factory()->create([
     'name' => 'tecnico3',
@@ -84,7 +84,7 @@ $user3->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user4->assignRole($rolJefeCC);
+$user4->assignRole($rolTecnico);
 
 $user5 = \App\Models\User::factory()->create([
     'name' => 'tecnico4',
@@ -100,7 +100,7 @@ $user5 = \App\Models\User::factory()->create([
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user5->assignRole($rolJefeCC);
+$user5->assignRole($rolTecnico);
 
  $user6 = \App\Models\User::factory()->create([
     'name' => 'Carlos',
@@ -116,7 +116,7 @@ $user5->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user6->assignRole($rolJefeCC);
+$user6->assignRole($rolJefeDept);
 
 $user7 = \App\Models\User::factory()->create([
     'name' => 'Ana',
@@ -132,7 +132,7 @@ $user7 = \App\Models\User::factory()->create([
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user7->assignRole($rolJefeCC);
+$user7->assignRole($rolJefeDept);
 
  $user8 = \App\Models\User::factory()->create([
     'name' => 'Luis',
@@ -148,7 +148,7 @@ $user7->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user8->assignRole($rolJefeCC);
+$user8->assignRole($rolJefeDept);
  $user9 = \App\Models\User::factory()->create([
     'name' => 'Mónica',
     'surnameP' => 'Sánchez',
@@ -163,7 +163,7 @@ $user8->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-    $user9->assignRole($rolJefeCC);
+    $user9->assignRole($rolJefeDept);
  $user10 = \App\Models\User::factory()->create([
     'name' => 'Jorge',
     'surnameP' => 'Pérez',
@@ -178,7 +178,7 @@ $user8->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user10->assignRole($rolJefeCC);
+$user10->assignRole($rolJefeDept);
 
  $user11 = \App\Models\User::factory()->create([
     'name' => 'Lucía',
@@ -194,7 +194,7 @@ $user10->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user11->assignRole($rolJefeCC);
+$user11->assignRole($rolJefeDept);
 
  $user12 = \App\Models\User::factory()->create([
     'name' => 'Fernando',
@@ -210,7 +210,7 @@ $user11->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user12->assignRole($rolJefeCC);
+$user12->assignRole($rolJefeDept);
 
  $user13 = \App\Models\User::factory()->create([
     'name' => 'Patricia',
@@ -226,7 +226,7 @@ $user12->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user13->assignRole($rolJefeCC);
+$user13->assignRole($rolJefeDept);
 
 $user14 = \App\Models\User::factory()->create([
     'name' => 'Ricardo',
@@ -242,7 +242,7 @@ $user14 = \App\Models\User::factory()->create([
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user14->assignRole($rolJefeCC);
+$user14->assignRole($rolJefeDept);
 
  $user15 = \App\Models\User::factory()->create([
     'name' => 'Valeria',
@@ -258,7 +258,7 @@ $user14->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user15->assignRole($rolJefeCC);
+$user15->assignRole($rolJefeDept);
 
 $user16 = \App\Models\User::factory()->create([
     'name' => 'Daniel',
@@ -274,7 +274,7 @@ $user16 = \App\Models\User::factory()->create([
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user16->assignRole($rolJefeCC);
+$user16->assignRole($rolJefeDept);
 
 
  $user17 = \App\Models\User::factory()->create([
@@ -291,7 +291,7 @@ $user16->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user17->assignRole($rolJefeCC);
+$user17->assignRole($rolJefeDept);
 
  $user18 = \App\Models\User::factory()->create([
     'name' => 'Alberto',
@@ -307,7 +307,7 @@ $user17->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user18->assignRole($rolJefeCC);
+$user18->assignRole($rolJefeDept);
 
 
 $user19 = \App\Models\User::factory()->create([
@@ -324,7 +324,7 @@ $user19 = \App\Models\User::factory()->create([
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user19->assignRole($rolJefeCC);
+$user19->assignRole($rolJefeDept);
 
  $user20 = \App\Models\User::factory()->create([
     'name' => 'Diego',
@@ -340,7 +340,7 @@ $user19->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user20->assignRole($rolJefeCC);
+$user20->assignRole($rolJefeDept);
 
 $user21 = \App\Models\User::factory()->create([
     'name' => 'Sofía',
@@ -356,7 +356,7 @@ $user21 = \App\Models\User::factory()->create([
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user21->assignRole($rolJefeCC);
+$user21->assignRole($rolJefeDept);
 
  $user22 = \App\Models\User::factory()->create([
     'name' => 'Emilio',
@@ -372,7 +372,7 @@ $user21->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user22->assignRole($rolJefeCC);
+$user22->assignRole($rolJefeDept);
 
 $user23 = \App\Models\User::factory()->create([
     'name' => 'Alejandra',
@@ -388,7 +388,7 @@ $user23 = \App\Models\User::factory()->create([
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user23->assignRole($rolJefeCC);
+$user23->assignRole($rolJefeDept);
 
  $user24 = \App\Models\User::factory()->create([
     'name' => 'Andrés',
@@ -404,7 +404,7 @@ $user23->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user24->assignRole($rolJefeCC);
+$user24->assignRole($rolJefeDept);
 
  $user25 = \App\Models\User::factory()->create([
     'name' => 'María',
@@ -420,7 +420,7 @@ $user24->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user25->assignRole($rolJefeCC);
+$user25->assignRole($rolJefeDept);
 
 $user26 = \App\Models\User::factory()->create([
     'name' => 'Roberto',
@@ -436,7 +436,7 @@ $user26 = \App\Models\User::factory()->create([
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user26->assignRole($rolJefeCC);
+$user26->assignRole($rolJefeDept);
 
  $user27 = \App\Models\User::factory()->create([
     'name' => 'Gabriela',
@@ -452,7 +452,7 @@ $user26->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user27->assignRole($rolJefeCC);
+$user27->assignRole($rolJefeDept);
 
 $user28 = \App\Models\User::factory()->create([
     'name' => 'Héctor',
@@ -468,7 +468,7 @@ $user28 = \App\Models\User::factory()->create([
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user28->assignRole($rolJefeCC);
+$user28->assignRole($rolJefeDept);
 
  $user29 = \App\Models\User::factory()->create([
     'name' => 'Beatriz',
@@ -484,7 +484,7 @@ $user28->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user29->assignRole($rolJefeCC);
+$user29->assignRole($rolJefeDept);
 
  $user30 = \App\Models\User::factory()->create([
     'name' => 'José',
@@ -500,23 +500,7 @@ $user29->assignRole($rolJefeCC);
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user30->assignRole($rolJefeCC);
-
- $user31 = \App\Models\User::factory()->create([
-    'name' => 'Renata',
-    'surnameP' => 'Del Río',
-    'surnameM' => 'Lozano',
-    'email' => 'cc@mail.com',
-    'password' => bcrypt('Temporal2025'),
-    'phone' => '5550000026',
-    'role_id' => 3,
-    'departamento_id' => 26,
-    'num_empleado' => 'EMP026',
-    'avatar' => '',
-    'status' => 1,
-    'disponibilidad' => 1,
-]);
-$user31->assignRole($rolJefeCC);
+$user30->assignRole($rolJefeDept);
 
 $user32 = \App\Models\User::factory()->create([
     'name' => 'Marco',
@@ -532,5 +516,21 @@ $user32 = \App\Models\User::factory()->create([
     'status' => 1,
     'disponibilidad' => 1,
 ]);
-$user32->assignRole($rolJefeCC);
+$user32->assignRole($rolJefeDept);
+
+ $user1 = \App\Models\User::factory()->create([
+    'name' => 'JefeCC',
+    'surnameP' => 'computo',
+    'surnameM' => 'tecnm',
+    'email' => 'jefecc@mail.com',
+    'password' => bcrypt('Temporal2025'),
+    'phone' => '5550000020',
+    'role_id' => 4,
+    'departamento_id' => 26,
+    'num_empleado' => '1000',
+    'avatar' => '',
+    'status' => 1,
+    'disponibilidad' => 1,
+]);
+$user1->assignRole($rolJefedeCC);
     }}
