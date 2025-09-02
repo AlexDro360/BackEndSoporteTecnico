@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('bitacoras', function (Blueprint $table) {
             $table->id();
             $table->dateTime('fecha');
-            $table->string('descFalla', 200);
-            $table->string('descSolucion', 200);
-            $table->string('materialReq', 200);
+            $table->string('descFalla');
+            $table->string('descSolucion');
+            $table->string('materialReq');
             $table->integer('duracion');
             $table->unsignedBigInteger('idSolicitud'); 
 
