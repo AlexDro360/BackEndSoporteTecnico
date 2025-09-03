@@ -64,13 +64,13 @@ class ConfigAdicionalesController extends Controller
 public function resetFolioRespuesta()
     {
         try {
-            $config = ConfigAdicionales::first(); // busca la primera configuración, cambia si usas ID
+            $config = ConfigAdicionales::first(); 
 
             if (!$config) {
                 return response()->json(['error' => 'No se encontró configuración'], 404);
             }
 
-            $config->FolioRespuesta = 0; // resetea a 0 (o al valor que quieras)
+            $config->FolioRespuesta = 1;
             $config->save();
 
             return response()->json([
@@ -107,7 +107,6 @@ public function resetFolioRespuesta()
     public function getFolioRespuesta()
     {
         try {
-            // Buscar el primer registro de la tabla config_adicionales
             $config = ConfigAdicionales::first();
 
             if (!$config) {
@@ -117,7 +116,7 @@ public function resetFolioRespuesta()
             }
 
             return response()->json([
-                'folio_respuesta' => $config->FolioRespuesta // o $config->folio_respuesta si tu columna está en snake_case
+                'folio_respuesta' => $config->FolioRespuesta
             ], 200);
 
         } catch (\Exception $e) {
