@@ -58,14 +58,14 @@ return [
         
         'pdfsRespuestas' => [
             'driver' => 'local',
-            'root' => storage_path('app/pdfs/respuestas'),
+            'root' => storage_path('app/public/pdfs2/respuestas'),
             'url' => env('APP_URL').'/storage/respuestas',
             'throw' => false,
         ],
 
         'pdfsSolicitudes' => [
             'driver' => 'local',
-            'root' => storage_path('app/pdfs/solicitudes'),
+            'root' => storage_path('app/public/pdfs2/solicitudes'),
             'url' => env('APP_URL').'/storage/solicitudues',
             'throw' => false,
         ]
