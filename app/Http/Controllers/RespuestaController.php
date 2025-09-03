@@ -46,7 +46,7 @@ class RespuestaController extends Controller
             $FolioRespuesta = ConfigAdicionales::lockForUpdate()->first();
 
             $data['folio'] = $FolioRespuesta->FolioRespuesta;
-            $data['fecha'] = Carbon::now()->toDateString();
+            $data['fecha'] = Carbon::now();
             
             $FolioRespuesta->increment('FolioRespuesta');
             
