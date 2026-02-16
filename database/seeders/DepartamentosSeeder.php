@@ -146,13 +146,13 @@ class DepartamentosSeeder extends Seeder
             'folio' => 1
         ]);
         Departamento::create([
-            'nombre' => 'Sindicato 61',
+            'nombre' => 'Sindicato Sección 61',
             'abreviatura' => 'SIND61',
             'folio' => 1
         ]);
         Departamento::create([
-            'nombre' => 'Sindicato',
-            'abreviatura' => 'SIND',
+            'nombre' => 'Sindicato Sección 22',
+            'abreviatura' => 'SIND22',
             'folio' => 1
         ]);
         Departamento::create([
