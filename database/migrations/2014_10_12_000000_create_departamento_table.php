@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('departamentos', function (Blueprint $table) {
             $table->id();
             $table->string('nombre',100);
-            $table->string('abreviatura', 5);
+            $table->string('abreviatura', 10);
             $table->integer('folio');
             $table->timestamps();
         });
