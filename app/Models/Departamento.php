@@ -26,6 +26,7 @@ class Departamento extends Model implements JWTSubject
         'nombre',
         'abreviatura',
         'folio',
+        'numIntentosEditarFolio',
     ];
     
 

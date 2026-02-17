@@ -43,6 +43,8 @@ class RespuestaController extends Controller
 
         DB::transaction(function () use (&$data, $request) {
 
+            $solicitud = Solicitud::with('user.departamento')->findOrFail($request->idSolicitud);
+            
             $FolioRespuesta = ConfigAdicionales::lockForUpdate()->first();
 
             $data['folio'] = $FolioRespuesta->FolioRespuesta;
@@ -55,6 +57,8 @@ class RespuestaController extends Controller
             $urlPdf = $this->pdfService->generarPdf('respuesta',['data' => $respuesta], 'respuesta', 'pdfsRespuestas');
 
             $respuesta->update(['path_pdf' => $urlPdf]);
+
+            $respuesta->setRelation('solicitud', $solicitud);
             
             $solicitud = Solicitud::findOrFail($request->idSolicitud);
             if ($solicitud->idEstado != 2) {

@@ -48,7 +48,7 @@ class SolicitudController extends Controller
                 return [
                     'user' => $solicitud->user ? [
                         'id' => $solicitud->user->id,
-                        'full_name' => $solicitud->user->name . ' ' . $solicitud->user->surname,
+                        'full_name' => $solicitud->user->name . ' ' . $solicitud->user->surnameP . ' ' . $solicitud->user->surnameM,
                         'email' => $solicitud->user->email,
                         'phone' => $solicitud->user->phone,
                         'departamento' => $solicitud->user->departamento ? $solicitud->user->departamento->nombre : 'Sin departamento',
@@ -138,7 +138,7 @@ class SolicitudController extends Controller
                 return [
                     'user' => $solicitud->user ? [
                         'id' => $solicitud->user->id,
-                        'full_name' => $solicitud->user->name . ' ' . $solicitud->user->surname,
+                        'full_name' => $solicitud->user->name . ' ' . $solicitud->user->surnameP . ' ' . $solicitud->user->surnameM,
                         'email' => $solicitud->user->email,
                         'phone' => $solicitud->user->phone,
                         'departamento' => $solicitud->user->departamento ? $solicitud->user->departamento->nombre : 'Sin departamento',
@@ -230,7 +230,7 @@ class SolicitudController extends Controller
                 return [
                     'user' => $solicitud->user ? [
                         'id' => $solicitud->user->id,
-                        'full_name' => $solicitud->user->name . ' ' . $solicitud->user->surname,
+                        'full_name' => $solicitud->user->name . ' ' . $solicitud->user->surnameP . ' ' . $solicitud->user->surnameM,
                         'email' => $solicitud->user->email,
                         'phone' => $solicitud->user->phone,
                         'departamento' => $solicitud->user->departamento ? $solicitud->user->departamento->nombre : 'Sin departamento',
@@ -349,13 +349,17 @@ class SolicitudController extends Controller
     public function update(Request $request, string $id)
     {
         $solicitud = Solicitud::findOrFail($id);
-        if ($solicitud->idEstado != 1) {
+        if ($solicitud->idEstado != 1 && $solicitud->idEstado != 2) {
             return response()->json([
                 "message" => "No se puede editar esta solicitud porque ya no está pendiente.",
                 "code" => 403
             ], 403);
         }
-        $solicitud->update($request->all());
+
+        $solicitud->fill($request->all());
+
+        $solicitud->idEstado = 1;
+        $solicitud->save();
 
         return response()->json([
             "message" => 200,
@@ -409,7 +413,7 @@ class SolicitudController extends Controller
             Storage::disk('pdfsSolicitudes')->path($solicitud->path_pdf),
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="Solicitud_'.$solicitud->id.'.pdf"'
+                'Content-Disposition' => 'inline; filename="Solicitud_' . $solicitud->id . '.pdf"'
             ]
         );
     }

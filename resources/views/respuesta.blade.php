@@ -112,12 +112,7 @@
         <tr style="border-top: 1px solid black;">
             <td class="bold">Asignado a:</td>
             <td>
-                @if(isset($data->solicitud->personalAtencion) && $data->solicitud->personalAtencion->isNotEmpty())
-                    @foreach($data->solicitud->personalAtencion as $persona)
-                        {{ $persona->name }} {{ $persona->surnameP }} {{ $persona->surnameM }}<br>
-                    @endforeach
-                @else
-                @endif
+                Coordinacion de Servicios a Internet
             </td>
 
             <td></td>
@@ -140,7 +135,9 @@
             <td colspan="2" class="bold">Departamento: {{ $data->solicitud->user->departamento->nombre}}</td>
         </tr>
         <tr>
-            <td colspan="2" class="bold">Folio I: CC/{{ str_pad($data->folio, 3, '0', STR_PAD_LEFT) }}</td>
+            <td colspan="2" class="bold">
+                Folio I: {{$data->solicitud->user->departamento->abreviatura}}/{{ str_pad($data->solicitud->folio, 3, '0', STR_PAD_LEFT) }}
+            </td>
         </tr>
         <tr style="border-top: 1px solid black;">
             <td class="bold" style="width: 50%;">Verificado y Liberado por: {{ $data['nombreVerifico'] }}</td>

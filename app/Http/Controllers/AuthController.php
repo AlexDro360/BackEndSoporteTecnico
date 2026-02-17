@@ -153,6 +153,7 @@ class AuthController extends Controller
                 'permissions' => $permissions,
                 'status' => auth("api")->user()->status,
                 'role_id' => auth("api")->user()->role_id,
+                'departamento_id' => auth("api")->user()->departamento ? auth("api")->user()->departamento->id : '',
             ]
         ]);
     }

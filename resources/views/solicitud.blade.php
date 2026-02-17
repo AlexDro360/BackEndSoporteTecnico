@@ -85,7 +85,7 @@
             </tr>
             <tr>
                 <td style="border: 1px solid black;">Centro de computo</td>
-                <td style="border: 1px solid black; width: 20px"></td>
+                <td style="border: 1px solid black; width: 20px; text-align: center">X</td>
             </tr>
         </table>
     </div>

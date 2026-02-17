@@ -112,6 +112,7 @@ Route::group([
     Route::get('/config-adicionales/folios/respuesta', [ConfigAdicionalesController::class, 'getFolioRespuesta']);
     Route::put('/folios/actualizar/{id}', [ConfigAdicionalesController::class, 'updateFolios']);
     Route::get('/estatus', [ConfigAdicionalesController::class, 'getEstatus']);
+    Route::get('/folios/{id}', [ConfigAdicionalesController::class, 'showMyFolio']);
 });
 
 Route::group([

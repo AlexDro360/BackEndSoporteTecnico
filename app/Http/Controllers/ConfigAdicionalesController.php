@@ -6,6 +6,8 @@ use App\Models\ConfigAdicionales;
 use App\Models\Departamento;
 use App\Models\Estado;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ConfigAdicionalesController extends Controller
 {
@@ -20,13 +22,36 @@ class ConfigAdicionalesController extends Controller
         return response()->json($folios);
     }
 
+    public function showMyFolio(String $id)
+    {
+        $folioDepto = Departamento::find($id);
+
+        return response()->json($folioDepto);
+    }
+
+
     public function resetFolioSolicitud(string $id)
     {
-        $depto = Departamento::find($id);
+        $depto = Departamento::findOrFail($id);
+        $user = Auth::user();
 
-        $depto->update(['folio' => 1]);
+        return DB::transaction(function () use ($depto, $user) {
+            if ($user->hasRole(3)) {
+                if ($depto->numIntentosEditarFolio <= 0) {
+                    return response()->json([
+                        'message' => 'No tienes intentos restantes para realizar esta acción.'
+                    ], 403);
+                }
+                $depto->decrement('numIntentosEditarFolio');
+            }
 
-        return response()->json(['message' => 'Folio de solicitud reiniciado correctamente', 'data' => $depto]);
+            $depto->update(['folio' => 1]);
+
+            return response()->json([
+                'message' => 'Folio de solicitud reiniciado correctamente',
+                'data' => $depto->refresh()
+            ]);
+        });
     }
 
 
@@ -42,29 +67,29 @@ class ConfigAdicionalesController extends Controller
     }
 
     public function updateFolioRespuesta(Request $request)
-{
-    try {
-        $config = ConfigAdicionales::first(); // O busca por ID si es por registro específico
-
-        if (!$config) {
-            return response()->json(['error' => 'No se encontró configuración'], 404);
-        }
-
-        $config->FolioRespuesta = $request->FolioRespuesta;
-        $config->save();
-
-        return response()->json(['message' => 'Folio de respuesta actualizado correctamente']);
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => $e->getMessage()
-        ], 500);
-    }
-}
-
-public function resetFolioRespuesta()
     {
         try {
-            $config = ConfigAdicionales::first(); 
+            $config = ConfigAdicionales::first();
+
+            if (!$config) {
+                return response()->json(['error' => 'No se encontró configuración'], 404);
+            }
+
+            $config->FolioRespuesta = $request->FolioRespuesta;
+            $config->save();
+
+            return response()->json(['message' => 'Folio de respuesta actualizado correctamente']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function resetFolioRespuesta()
+    {
+        try {
+            $config = ConfigAdicionales::first();
 
             if (!$config) {
                 return response()->json(['error' => 'No se encontró configuración'], 404);
@@ -90,13 +115,35 @@ public function resetFolioRespuesta()
             'folio' => 'nullable|integer|min:0',
         ]);
 
-        $depto = Departamento::find($id);
+        $depto = Departamento::findOrFail($id);
+        $user = Auth::user();
+        $nuevoFolio = $request->input('folio', $depto->folio);
 
-        $depto->update([
-            'folio' => $request->input('folio', $depto->folio),
-        ]);
+        if ($depto->folio == $nuevoFolio) {
+            return response()->json(['message' => 'No hubo cambios en el folio', 'data' => $depto]);
+        }
 
-        return response()->json(['message' => 'Folios actualizados correctamente', 'data' => $depto]);
+        return DB::transaction(function () use ($depto, $user, $nuevoFolio) {
+
+            if ($user->hasRole(3)) {
+                if ($depto->numIntentosEditarFolio <= 0) {
+                    return response()->json([
+                        'message' => 'No tienes intentos restantes para realizar esta acción.'
+                    ], 403);
+                }
+
+                $depto->decrement('numIntentosEditarFolio');
+            }
+
+            $depto->update([
+                'folio' => $nuevoFolio,
+            ]);
+
+            return response()->json([
+                'message' => 'Folios actualizados correctamente',
+                'data' => $depto->refresh()
+            ]);
+        });
     }
 
     public function getEstatus()
@@ -118,7 +165,6 @@ public function resetFolioRespuesta()
             return response()->json([
                 'folio_respuesta' => $config->FolioRespuesta
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Error al obtener el folio',
@@ -126,5 +172,4 @@ public function resetFolioRespuesta()
             ], 500);
         }
     }
-
 }
