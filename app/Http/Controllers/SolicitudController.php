@@ -349,6 +349,12 @@ class SolicitudController extends Controller
     public function update(Request $request, string $id)
     {
         $solicitud = Solicitud::findOrFail($id);
+        if ($solicitud->idEstado != 1) {
+            return response()->json([
+                "message" => "No se puede editar esta solicitud porque ya no está pendiente.",
+                "code" => 403
+            ], 403);
+        }
         $solicitud->update($request->all());
 
         return response()->json([
