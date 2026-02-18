@@ -22,9 +22,9 @@ class StoreBitacoraRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'descFalla' => 'required|string|max:200',
-            'descSolucion' => 'required|string|max:200',
-            'materialReq' => 'required|string|max:200',
+            'descFalla' => 'required|string|max:3000',
+            'descSolucion' => 'required|string|max:3000',
+            'materialReq' => 'required|string|max:3000',
             'duracion' => 'required|integer|min:1',
             'idSolicitud' => 'required|exists:solicituds,id',
         ];

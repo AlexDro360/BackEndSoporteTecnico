@@ -22,8 +22,8 @@ class StoreRespuestaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'asunto' => 'required|string|max:100',
-            'descripcion' => 'required|string|max:500',
+            'asunto' => 'required|string|max:500',
+            'descripcion' => 'required|string|max:3000',
             'nombreVerifico' => 'required|string|max:150',
             'idCentroComputoJefe' => 'required|exists:centro_computo_jefes,id',
             'idTipoMantenimiento' => 'sometimes|exists:tipo_mantenimientos,id',
