@@ -360,7 +360,7 @@ class SolicitudController extends Controller
 
             $solicitud->fill($request->all());
 
-            // $solicitud->idEstado = 1;
+            $solicitud->idEstado = 5;
 
             $urlPdf =  $this->pdfService->generarPdf('solicitud', ['data' => $solicitud], 'solicitud', 'pdfsSolicitudes');
             $solicitud->path_pdf = $urlPdf;
