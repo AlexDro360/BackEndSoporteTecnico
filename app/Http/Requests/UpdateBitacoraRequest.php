@@ -22,9 +22,9 @@ class UpdateBitacoraRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'descFalla' => 'sometimes|string|max:200',
-            'descSolucion' => 'sometimes|string|max:200',
-            'materialReq' => 'sometimes|string|max:200',
+            'descFalla' => 'sometimes|string|max:3000',
+            'descSolucion' => 'sometimes|string|max:3000',
+            'materialReq' => 'sometimes|string|max:3000',
             'duracion' => 'sometimes|integer|min:1',
             'idSolicitud' => 'sometimes|exists:solicituds,id',
         ];
