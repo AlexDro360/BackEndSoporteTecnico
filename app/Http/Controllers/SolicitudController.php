@@ -356,22 +356,29 @@ class SolicitudController extends Controller
             ], 403);
         }
 
-        $solicitud->fill($request->all());
+        return DB::transaction(function () use ($solicitud, $request) {
 
-        $solicitud->idEstado = 1;
-        $solicitud->save();
+            $solicitud->fill($request->all());
 
-        return response()->json([
-            "message" => 200,
-            "user" => [
-                "id" => $solicitud->id,
-                'descripcion' => $solicitud->descripcion,
-                'idBitacora' => $solicitud->idBitacora,
-                'idUser' => $solicitud->idUser,
-                'idTipo' => $solicitud->idTipo,
-                'idEstado' => $solicitud->idEstado,
-            ]
-        ]);
+            $solicitud->idEstado = 1;
+
+            $urlPdf =  $this->pdfService->generarPdf('solicitud', ['data' => $solicitud], 'solicitud', 'pdfsSolicitudes');
+            $solicitud->path_pdf = $urlPdf;
+
+            $solicitud->save();
+
+            return response()->json([
+                "message" => 200,
+                "user" => [
+                    "id" => $solicitud->id,
+                    'descripcion' => $solicitud->descripcion,
+                    'idBitacora' => $solicitud->idBitacora,
+                    'idUser' => $solicitud->idUser,
+                    'idTipo' => $solicitud->idTipo,
+                    'idEstado' => $solicitud->idEstado,
+                ]
+            ]);
+        });
     }
 
     /**

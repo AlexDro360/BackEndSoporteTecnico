@@ -126,7 +126,7 @@
             <td></td>
         </tr>
         <tr style="border-top: 1px solid black;">
-            <td style="height: 100px; vertical-align: top;" colspan="2" class="bold">
+            <td style="height: 300px; vertical-align: top;" colspan="2" class="bold">
                 Trabajo Realizado: {{ $data['descripcion'] }}
             </td>
         </tr>
