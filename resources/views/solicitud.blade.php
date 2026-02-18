@@ -125,7 +125,9 @@
     </tr>
     <tr style="border-top: 1px solid black;">
         <td style="height: 300px">
-            <p style="margin: 0;">{{ $data->descripcionUser }}</p>
+            <p style="margin: 0;">
+                {!! nl2br(e($data->descripcionUser)) !!}
+            </p>
         </td>
     </tr>
 </table>

@@ -127,7 +127,7 @@
         </tr>
         <tr style="border-top: 1px solid black;">
             <td style="height: 300px; vertical-align: top;" colspan="2" class="bold">
-                {{ $data['descripcion'] }}
+                {!! nl2br(e($data['descripcion'])) !!}
             </td>
         </tr>
         {{-- {{dd($data)}} --}}
