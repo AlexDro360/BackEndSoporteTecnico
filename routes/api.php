@@ -87,6 +87,7 @@ Route::group([
     'middleware' => 'auth:api',
 ], function ($router) {
     Route::get('tecnicos/', [AtencionSolicitudController::class, 'tecnicos']);
+    Route::get('tecnicos/{id}', [AtencionSolicitudController::class, 'tecnicosSolicitud']);
     Route::post('/asignar/{id}', [AtencionSolicitudController::class, 'asignarTecnicos']);
     Route::put('/editar/{id}', [AtencionSolicitudController::class, 'update']);
     Route::delete('/borrar/{id}', [AtencionSolicitudController::class, 'destroy']);

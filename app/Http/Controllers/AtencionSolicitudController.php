@@ -15,6 +15,8 @@ class AtencionSolicitudController extends Controller
         $solicitud = Solicitud::findOrFail($id);
         DB::transaction(function () use ($request, $solicitud) {
 
+            $this->cancelarTecnicos($solicitud);
+
             User::whereIn('id', $request->personalAtencion)->update(['disponibilidad' => false]);
 
             $tecnicosData = [];
@@ -52,21 +54,34 @@ class AtencionSolicitudController extends Controller
         return response()->json(['message' => 'Los técnicos asignados fueron actualizados correctamente'], 200);
     }
 
+    private function cancelarTecnicos(Solicitud $solicitud)
+    {
+        $tecnicosActivos = $solicitud->personalAtencion()->wherePivot('estado', 1)->pluck('users.id')->toArray();
+
+        if (!empty($tecnicosActivos)) {
+            foreach ($tecnicosActivos as $idTecnico) {
+                $solicitud->personalAtencion()->updateExistingPivot($idTecnico, ['estado' => 0]);
+            }
+            User::whereIn('id', $tecnicosActivos)->update(['disponibilidad' => true]);
+        }
+    }
 
     public function destroy(string $id)
     {
         $solicitud = Solicitud::findOrFail($id);
 
         DB::transaction(function () use ($solicitud) {
-            $tecnicosActivos = $solicitud->personalAtencion()->wherePivot('estado', 1)->pluck('users.id')->toArray();
+            // $tecnicosActivos = $solicitud->personalAtencion()->wherePivot('estado', 1)->pluck('users.id')->toArray();
 
-            if (!empty($tecnicosActivos)) {
-                foreach ($tecnicosActivos as $idTecnico) {
-                    $solicitud->personalAtencion()->updateExistingPivot($idTecnico, ['estado' => 0]);
-                }
-                User::whereIn('id', $tecnicosActivos)->update(['disponibilidad' => true]);
-            }
-            
+            // if (!empty($tecnicosActivos)) {
+            //     foreach ($tecnicosActivos as $idTecnico) {
+            //         $solicitud->personalAtencion()->updateExistingPivot($idTecnico, ['estado' => 0]);
+            //     }
+            //     User::whereIn('id', $tecnicosActivos)->update(['disponibilidad' => true]);
+            // }
+
+            $this->cancelarTecnicos($solicitud);
+
             $solicitud->update(['idEstado' => 2]);
         });
 
@@ -84,5 +99,33 @@ class AtencionSolicitudController extends Controller
             })
             ->get();
         return response()->json($tecnicos, 200);
+    }
+
+    public function tecnicosSolicitud(string $id)
+    {
+        $solicitud = Solicitud::findOrFail($id);
+
+        $tecnicosActivos = $solicitud->personalAtencion()
+            ->wherePivot('estado', 1)
+            ->get()
+            ->map(function ($tecnico) {
+                $tecnico->asignado = true;
+                return $tecnico;
+            });
+
+        $tecnicosDisponibles = User::where('status', true)
+            ->where('disponibilidad', true)
+            ->whereHas('roles', function ($query) {
+                $query->where('id', '2');
+            })
+            ->get()
+            ->map(function ($tecnico) {
+                $tecnico->asignado = false;
+                return $tecnico;
+            });
+
+        $todosLosTecnicos = $tecnicosDisponibles->merge($tecnicosActivos);
+
+        return response()->json($todosLosTecnicos, 200);
     }
 }

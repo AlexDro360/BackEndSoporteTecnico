@@ -215,9 +215,13 @@ class SolicitudController extends Controller
         $perPage = $request->input('perPage', 10);
 
         $solicitudes = Solicitud::with(['personalAtencion', 'user', 'respuesta', 'estado', 'tipo'])
-            ->whereHas('personalAtencion', function ($q) use ($id) {
-                $q->where('user_id', $id);
+            ->whereHas('personalAtencion', function ($query) use ($id) {
+                $query->where('user_id', $id)
+                    ->where('atencion_solicituds.estado', 1);
             })
+            // ->whereHas('personalAtencion', function ($q) use ($id) {
+            //     $q->where('user_id', $id);
+            // })
             ->when($search, function ($query, $search) {
                 $query->where('folio', 'like', "%{$search}%");
             })
