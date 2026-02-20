@@ -3,17 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSolicitudRequest;
-use App\Models\Bitacora;
-use App\Models\ConfigAdicionales;
-use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Solicitud;
 use App\Models\User;
 use App\Services\PdfService;
 use DB;
+use Illuminate\Http\Request;
 use Storage;
-
-use function PHPUnit\Framework\isEmpty;
 
 class SolicitudController extends Controller
 {
@@ -24,27 +19,25 @@ class SolicitudController extends Controller
         $this->pdfService = $pdfService;
     }
 
-
     public function index(Request $request)
     {
-        $search = $request->get("search");
+        $search = $request->get('search');
         $estatus = $request->input('filtroEstatus', 0);
         $perPage = $request->input('perPage', 10);
 
         $solicitudes = Solicitud::with(['user.departamento', 'respuesta'])
             ->when($search, function ($query) use ($search) {
-                $query->where("folio", "like", "%{$search}%");
+                $query->where('folio', 'like', "%{$search}%");
             })
             ->when($estatus > 0, function ($query) use ($estatus) {
-                $query->where("idEstado", $estatus);
+                $query->where('idEstado', $estatus);
             })
-            ->orderByDesc("id")
+            ->orderByDesc('id')
             ->paginate($perPage);
 
-
         return response()->json([
-            "total" => $solicitudes->total(),
-            "solicitudes" => $solicitudes->map(function ($solicitud) {
+            'total' => $solicitudes->total(),
+            'solicitudes' => $solicitudes->map(function ($solicitud) {
                 return [
                     'user' => $solicitud->user ? [
                         'id' => $solicitud->user->id,
@@ -54,7 +47,7 @@ class SolicitudController extends Controller
                         'departamento' => $solicitud->user->departamento ? $solicitud->user->departamento->nombre : 'Sin departamento',
                         'departamentoC' => $solicitud->user->departamento,
                         'num_empleado' => $solicitud->user->num_empleado,
-                        'avatar' => $solicitud->user->avatar ? asset("storage/" . $solicitud->user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
+                        'avatar' => $solicitud->user->avatar ? asset('storage/' . $solicitud->user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                     ] : null,
                     'estado' => $solicitud->estado ? [
                         'id' => $solicitud->estado->id,
@@ -70,12 +63,11 @@ class SolicitudController extends Controller
                     'idTipo' => $solicitud->idTipo,
                     'idEstado' => $solicitud->idEstado,
                     'respuesta' => $solicitud->respuesta ? true : false,
-                    'created_format_at' => $solicitud->created_at->format("Y-m-d h:i A"),
-                    'updated_format_at' => $solicitud->updated_at->format("Y-m-d h:i A"),
+                    'created_format_at' => $solicitud->created_at->format('Y-m-d h:i A'),
+                    'updated_format_at' => $solicitud->updated_at->format('Y-m-d h:i A'),
                 ];
             }),
         ]);
-
 
         // return response()->json([
         //     "total" => $solicitudes->total(),
@@ -133,8 +125,8 @@ class SolicitudController extends Controller
             ->paginate($perPage);
 
         return response()->json([
-            "total" => $solicitudes->total(),
-            "solicitudes" => $solicitudes->map(function ($solicitud) {
+            'total' => $solicitudes->total(),
+            'solicitudes' => $solicitudes->map(function ($solicitud) {
                 return [
                     'user' => $solicitud->user ? [
                         'id' => $solicitud->user->id,
@@ -144,7 +136,7 @@ class SolicitudController extends Controller
                         'departamento' => $solicitud->user->departamento ? $solicitud->user->departamento->nombre : 'Sin departamento',
                         'departamentoC' => $solicitud->user->departamento,
                         'num_empleado' => $solicitud->user->num_empleado,
-                        'avatar' => $solicitud->user->avatar ? asset("storage/" . $solicitud->user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
+                        'avatar' => $solicitud->user->avatar ? asset('storage/' . $solicitud->user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                     ] : null,
                     'estado' => $solicitud->estado ? [
                         'id' => $solicitud->estado->id,
@@ -160,12 +152,11 @@ class SolicitudController extends Controller
                     'idTipo' => $solicitud->idTipo,
                     'idEstado' => $solicitud->idEstado,
                     'respuesta' => $solicitud->respuesta ? true : false,
-                    'created_format_at' => $solicitud->created_at->format("Y-m-d h:i A"),
-                    'updated_format_at' => $solicitud->updated_at->format("Y-m-d h:i A"),
+                    'created_format_at' => $solicitud->created_at->format('Y-m-d h:i A'),
+                    'updated_format_at' => $solicitud->updated_at->format('Y-m-d h:i A'),
                 ];
             }),
         ]);
-
 
         // return response()->json([
         //     "total" => $solicitudes->total(),
@@ -229,8 +220,8 @@ class SolicitudController extends Controller
             ->paginate($perPage);
 
         return response()->json([
-            "total" => $solicitudes->total(),
-            "solicitudes" => $solicitudes->map(function ($solicitud) {
+            'total' => $solicitudes->total(),
+            'solicitudes' => $solicitudes->map(function ($solicitud) {
                 return [
                     'user' => $solicitud->user ? [
                         'id' => $solicitud->user->id,
@@ -240,7 +231,7 @@ class SolicitudController extends Controller
                         'departamento' => $solicitud->user->departamento ? $solicitud->user->departamento->nombre : 'Sin departamento',
                         'departamentoC' => $solicitud->user->departamento,
                         'num_empleado' => $solicitud->user->num_empleado,
-                        'avatar' => $solicitud->user->avatar ? asset("storage/" . $solicitud->user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
+                        'avatar' => $solicitud->user->avatar ? asset('storage/' . $solicitud->user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
                     ] : null,
                     'estado' => $solicitud->estado ? [
                         'id' => $solicitud->estado->id,
@@ -256,13 +247,11 @@ class SolicitudController extends Controller
                     'idTipo' => $solicitud->idTipo,
                     'idEstado' => $solicitud->idEstado,
                     'respuesta' => $solicitud->respuesta ? true : false,
-                    'created_format_at' => $solicitud->created_at->format("Y-m-d h:i A"),
-                    'updated_format_at' => $solicitud->updated_at->format("Y-m-d h:i A"),
+                    'created_format_at' => $solicitud->created_at->format('Y-m-d h:i A'),
+                    'updated_format_at' => $solicitud->updated_at->format('Y-m-d h:i A'),
                 ];
             }),
         ]);
-
-
 
         // return response()->json([
         //     "total" => $solicitudes->total(),
@@ -305,9 +294,7 @@ class SolicitudController extends Controller
         // ]);
     }
 
-
     public function config() {}
-
 
     /**
      * Store a newly created resource in storage.
@@ -327,7 +314,7 @@ class SolicitudController extends Controller
 
             $departamento->increment('folio');
 
-            $urlPdf =  $this->pdfService->generarPdf('solicitud', ['data' => $solicitud], 'solicitud', 'pdfsSolicitudes');
+            $urlPdf = $this->pdfService->generarPdf('solicitud', ['data' => $solicitud], 'solicitud', 'pdfsSolicitudes');
 
             $solicitud->update(['path_pdf' => $urlPdf]);
         });
@@ -341,9 +328,10 @@ class SolicitudController extends Controller
     public function show(string $id)
     {
         $solicitud = Solicitud::with('user', 'estado', 'tipo')->find($id);
-        if (!$solicitud) {
+        if (! $solicitud) {
             return response()->json(['message' => 'No se encontro la solicitud'], 404);
         }
+
         return response()->json($solicitud, 200);
     }
 
@@ -366,21 +354,21 @@ class SolicitudController extends Controller
 
             $solicitud->idEstado = 1;
 
-            $urlPdf =  $this->pdfService->generarPdf('solicitud', ['data' => $solicitud], 'solicitud', 'pdfsSolicitudes');
+            $urlPdf = $this->pdfService->generarPdf('solicitud', ['data' => $solicitud], 'solicitud', 'pdfsSolicitudes');
             $solicitud->path_pdf = $urlPdf;
 
             $solicitud->save();
 
             return response()->json([
-                "message" => 200,
-                "user" => [
-                    "id" => $solicitud->id,
+                'message' => 200,
+                'user' => [
+                    'id' => $solicitud->id,
                     'descripcion' => $solicitud->descripcion,
                     'idBitacora' => $solicitud->idBitacora,
                     'idUser' => $solicitud->idUser,
                     'idTipo' => $solicitud->idTipo,
                     'idEstado' => $solicitud->idEstado,
-                ]
+                ],
             ]);
         });
     }
@@ -395,8 +383,8 @@ class SolicitudController extends Controller
         $solicitud->update(['idEstado' => 5]);
 
         return response()->json([
-            "message" => 200,
-            "message_text" => "La Solicitud se Terminó"
+            'message' => 200,
+            'message_text' => 'La Solicitud se Terminó',
         ]);
     }
 
@@ -407,8 +395,8 @@ class SolicitudController extends Controller
         $solicitud->update(['idEstado' => 2]);
 
         return response()->json([
-            "message" => 200,
-            "message_text" => "La Solicitud se Rechazó"
+            'message' => 200,
+            'message_text' => 'La Solicitud se Rechazó',
         ]);
     }
 
@@ -416,7 +404,7 @@ class SolicitudController extends Controller
     {
         $solicitud = Solicitud::find($id);
 
-        if (!$solicitud || !Storage::disk('pdfsSolicitudes')->exists($solicitud->path_pdf)) {
+        if (! $solicitud || ! Storage::disk('pdfsSolicitudes')->exists($solicitud->path_pdf)) {
             return response()->json(['error' => 'Archivo no encontrado'], 404);
         }
 
@@ -424,7 +412,7 @@ class SolicitudController extends Controller
             Storage::disk('pdfsSolicitudes')->path($solicitud->path_pdf),
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="Solicitud_' . $solicitud->id . '.pdf"'
+                'Content-Disposition' => 'inline; filename="Solicitud_' . $solicitud->id . '.pdf"',
             ]
         );
     }
@@ -448,8 +436,30 @@ class SolicitudController extends Controller
         });
 
         return response()->json([
-            "message" => 200,
-            "message_text" => "La solicitud se asignó como no solucionada"
+            'message' => 200,
+            'message_text' => 'La solicitud se asignó como no solucionada',
         ]);
+    }
+
+    public function confirmarSolucion(string $id)
+    {
+        $solicitud = Solicitud::findOrFail($id);
+
+        // if ($solicitud->idUser !== auth()->id()) {
+        //     return response()->json([
+        //         'message' => 'No tienes permiso para confirmar esta solicitud. Solo el usuario que la creó puede validarla.',
+        //     ], 403); 
+        // }
+
+        if ($solicitud->idEstado != 6) {
+            return response()->json([
+                'message' => 'La solicitud debe estar finalizada por el Centro de Cómputo antes de poder confirmar el trabajo realizado.',
+            ], 400);
+        }
+        $solicitud->update(['idEstado' => 7]);
+
+        return response()->json([
+            'message' => 'Solución confirmada y solicitud cerrada exitosamente.',
+        ], 200);
     }
 }

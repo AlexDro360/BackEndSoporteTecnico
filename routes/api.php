@@ -129,6 +129,7 @@ Route::patch('/solicitud/rechazar/{id}', [SolicitudController::class, 'rechazar'
 Route::get('/solicitud/mis-solicitudes/{id}', [SolicitudController::class, 'misSolicitudes']);
 Route::get('/solicitud/mis-solicitudes-atendidas/{id}', [SolicitudController::class, 'misSolicitudesAtendidas']);
 Route::put('/solicitud/nosolucion/{id}', [SolicitudController::class, 'noSolucionada']);
+Route::patch('/solicitudes/{id}/confirmar', [SolicitudController::class, 'confirmarSolucion']);
 
 Route::resource("estados", EstadoController::class);
 Route::resource("tipos", TipoController::class);
