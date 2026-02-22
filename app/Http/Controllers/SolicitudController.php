@@ -457,7 +457,10 @@ class SolicitudController extends Controller
                 'message' => 'La solicitud debe estar finalizada por el Centro de Cómputo antes de poder confirmar el trabajo realizado.',
             ], 400);
         }
-        $solicitud->update(['idEstado' => 7]);
+        $solicitud->update([
+            'idEstado' => 7,
+            'fecha_confirmacion' => now()
+        ]);
 
         return response()->json([
             'message' => 'Solución confirmada y solicitud cerrada exitosamente.',

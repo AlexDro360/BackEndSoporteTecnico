@@ -17,7 +17,12 @@ class Solicitud extends Model
         'descripcionUser',
         'idTipo',
         'idEstado',
-        'path_pdf'
+        'path_pdf',
+        'fecha_confirmacion',
+    ];
+
+    protected $casts = [
+        'fecha_confirmacion' => 'datetime',
     ];
 
     public function user()
