@@ -63,6 +63,7 @@ class SolicitudController extends Controller
                     'idTipo' => $solicitud->idTipo,
                     'idEstado' => $solicitud->idEstado,
                     'respuesta' => $solicitud->respuesta ? true : false,
+                    'respuestaData' => $solicitud->respuesta,
                     'created_format_at' => $solicitud->created_at->format('Y-m-d h:i A'),
                     'updated_format_at' => $solicitud->updated_at->format('Y-m-d h:i A'),
                 ];
