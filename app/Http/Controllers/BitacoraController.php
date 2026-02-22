@@ -21,7 +21,12 @@ class BitacoraController extends Controller
         $search = $request->get("search");
         $perPage = $request->input('perPage', 10);
 
-        $bitacoras = Bitacora::with('solicitud.user.departamento')
+        $bitacoras = Bitacora::with([
+            'solicitud.user.departamento',
+            'solicitud.personalAtencion' => function ($query) {
+                $query->wherePivot('estado', 1);
+            }
+        ])
             ->when($search, function ($query) use ($search) {
                 $query->whereHas("solicitud", function ($q) use ($search) {
                     $q->where("folio", "like", "%{$search}%");
