@@ -71,13 +71,20 @@ class BitacoraController extends Controller
 
     public function getBitacora(string $id)
     {
-        $bitacora = Bitacora::with('solicitud.user.departamento')->where('idSolicitud', '=', $id)->first();
+        $bitacora = Bitacora::with([
+            'solicitud.user.departamento',
+            'solicitud.personalAtencion' => function ($query) {
+                $query->wherePivot('estado', 1);
+            }
+        ])->firstWhere('idSolicitud', $id);
 
         if (!$bitacora) {
-            return response()->json(null, 200);
+            return response()->json([
+                'message' => 'No se encontró una bitácora para esta solicitud.'
+            ], 404);
         }
 
-        return response()->json($bitacora, 200);
+        return response()->json($bitacora);
     }
 
 
