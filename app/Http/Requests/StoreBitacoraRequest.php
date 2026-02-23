@@ -27,6 +27,7 @@ class StoreBitacoraRequest extends FormRequest
             'materialReq' => 'required|string|max:3000',
             'duracion' => 'required|integer|min:1',
             'idSolicitud' => 'required|exists:solicituds,id',
+            'idTipo' => 'required|exists:tipos,id',
         ];
     }
 }

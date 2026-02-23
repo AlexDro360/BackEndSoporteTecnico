@@ -27,6 +27,7 @@ class UpdateBitacoraRequest extends FormRequest
             'materialReq' => 'sometimes|string|max:3000',
             'duracion' => 'sometimes|integer|min:1',
             'idSolicitud' => 'sometimes|exists:solicituds,id',
+            'idTipo' => 'sometimes|exists:tipos,id',
         ];
     }
 }

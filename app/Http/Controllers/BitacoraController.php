@@ -23,6 +23,7 @@ class BitacoraController extends Controller
 
         $bitacoras = Bitacora::with([
             'solicitud.user.departamento',
+            'solicitud.tipo',
             'solicitud.personalAtencion' => function ($query) {
                 $query->wherePivot('estado', 1);
             }
@@ -51,10 +52,13 @@ class BitacoraController extends Controller
             $data = $request->validated();
             $data['fecha'] = Carbon::now()->toDateString();
 
+            $idTipoNuevo = $data['idTipo'];
+            unset($data['idTipo']);
+
             Bitacora::create($data);
 
             $solicitud = Solicitud::with('personalAtencion')->findOrFail($request->idSolicitud);
-            $solicitud->update(['idEstado' => 5]);
+            $solicitud->update(['idEstado' => 5, 'idTipo' => $idTipoNuevo]);
 
             $ids = $solicitud->personalAtencion->pluck('id');
             User::whereIn('id', $ids)->update(['disponibilidad' => true]);
@@ -78,6 +82,7 @@ class BitacoraController extends Controller
     {
         $bitacora = Bitacora::with([
             'solicitud.user.departamento',
+            'solicitud.tipo',
             'solicitud.personalAtencion' => function ($query) {
                 $query->wherePivot('estado', 1);
             }
@@ -98,15 +103,19 @@ class BitacoraController extends Controller
      */
     public function update(UpdateBitacoraRequest $request, string $id)
     {
-        $bitacora = Bitacora::find($id);
-        if (!$bitacora) {
-            return response()->json(['message' => 'No se encontro la bitacora'], 404);
-        }
+        DB::transaction(function () use ($request, $id) {
+            $data = $request->validated();
 
-        $bitacora->fill($request->validated());
-        $bitacora->fecha = now()->toDateString();
-        $bitacora->save();
+            $idTipoNuevo = $data['idTipo'];
+            unset($data['idTipo']);
+            $data['fecha'] = now()->toDateString();
 
+            $bitacora = Bitacora::findOrFail($id);
+
+            $bitacora->update($data);
+
+            $bitacora->solicitud->update(['idTipo' => $idTipoNuevo]);
+        });
         return response()->json(['message' => 'Bitácora actualizada exitosamente'], 200);
     }
 
