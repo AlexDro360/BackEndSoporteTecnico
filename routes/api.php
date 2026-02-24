@@ -128,8 +128,10 @@ Route::resource("solicitudes", SolicitudController::class);
 Route::patch('/solicitud/rechazar/{id}', [SolicitudController::class, 'rechazar']);
 Route::get('/solicitud/mis-solicitudes/{id}', [SolicitudController::class, 'misSolicitudes']);
 Route::get('/solicitud/mis-solicitudes-atendidas/{id}', [SolicitudController::class, 'misSolicitudesAtendidas']);
+Route::get('/solicitud/solicitudes-concluidas', [SolicitudController::class, 'solicitudesConcluidas']);
 Route::put('/solicitud/nosolucion/{id}', [SolicitudController::class, 'noSolucionada']);
 Route::patch('/solicitudes/{id}/confirmar', [SolicitudController::class, 'confirmarSolucion']);
+Route::patch('/solicitudes/{id}/archivar', [SolicitudController::class, 'archivarSolicitud']);
 
 Route::resource("estados", EstadoController::class);
 Route::resource("tipos", TipoController::class);

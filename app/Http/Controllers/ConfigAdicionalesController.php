@@ -116,34 +116,41 @@ class ConfigAdicionalesController extends Controller
         ]);
 
         $depto = Departamento::findOrFail($id);
-        $user = Auth::user();
+        // $user = Auth::user();
         $nuevoFolio = $request->input('folio', $depto->folio);
 
         if ($depto->folio == $nuevoFolio) {
             return response()->json(['message' => 'No hubo cambios en el folio', 'data' => $depto]);
         }
 
-        return DB::transaction(function () use ($depto, $user, $nuevoFolio) {
+        // if ($nuevoFolio < $depto->folio) {
+        //     return response()->json([
+        //         'message' => 'El nuevo folio debe ser mayor al actual'
+        //     ], 400);
+        // }   
 
-            if ($user->hasRole(3)) {
-                if ($depto->numIntentosEditarFolio <= 0) {
-                    return response()->json([
-                        'message' => 'No tienes intentos restantes para realizar esta acción.'
-                    ], 403);
-                }
+        // return DB::transaction(function () use ($depto, $nuevoFolio) {
 
-                $depto->decrement('numIntentosEditarFolio');
-            }
+        // if ($user->hasRole(3)) {
+        //     if ($depto->numIntentosEditarFolio <= 0) {
+        //         return response()->json([
+        //             'message' => 'No tienes intentos restantes para realizar esta acción.'
+        //         ], 403);
+        //     }
 
-            $depto->update([
-                'folio' => $nuevoFolio,
-            ]);
+        //     $depto->decrement('numIntentosEditarFolio');
+        // }
 
-            return response()->json([
-                'message' => 'Folios actualizados correctamente',
-                'data' => $depto->refresh()
-            ]);
-        });
+
+        $depto->update([
+            'folio' => $nuevoFolio,
+        ]);
+
+        return response()->json([
+            'message' => 'Folios actualizados correctamente',
+            'data' => $depto->refresh()
+        ]);
+        // });
     }
 
     public function getEstatus()

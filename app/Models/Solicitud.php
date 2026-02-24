@@ -19,10 +19,12 @@ class Solicitud extends Model
         'idEstado',
         'path_pdf',
         'fecha_confirmacion',
+        'fecha_archivado',
     ];
 
     protected $casts = [
         'fecha_confirmacion' => 'datetime',
+        'fecha_archivado' => 'datetime',
     ];
 
     public function user()

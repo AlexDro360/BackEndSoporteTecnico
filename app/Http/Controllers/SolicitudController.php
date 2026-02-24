@@ -69,6 +69,54 @@ class SolicitudController extends Controller
                 ];
             }),
         ]);
+    }
+    public function solicitudesConcluidas(Request $request)
+    {
+        $search = $request->get('search');
+        $perPage = $request->input('perPage', 10);
+
+        $solicitudes = Solicitud::with(['user.departamento', 'respuesta', 'estado'])
+            ->when($search, function ($query) use ($search) {
+                $query->where('folio', 'like', "%{$search}%");
+            })
+            ->whereIn('idEstado', [7, 8])
+            ->orderByDesc('id')
+            ->paginate($perPage);
+
+        return response()->json([
+            'total' => $solicitudes->total(),
+            'solicitudes' => $solicitudes->map(function ($solicitud) {
+                return [
+                    'user' => $solicitud->user ? [
+                        'id' => $solicitud->user->id,
+                        'full_name' => $solicitud->user->name . ' ' . $solicitud->user->surnameP . ' ' . $solicitud->user->surnameM,
+                        'email' => $solicitud->user->email,
+                        'phone' => $solicitud->user->phone,
+                        'departamento' => $solicitud->user->departamento ? $solicitud->user->departamento->nombre : 'Sin departamento',
+                        'departamentoC' => $solicitud->user->departamento,
+                        'num_empleado' => $solicitud->user->num_empleado,
+                        'avatar' => $solicitud->user->avatar ? asset('storage/' . $solicitud->user->avatar) : 'https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg',
+                    ] : null,
+                    'estado' => $solicitud->estado ? [
+                        'id' => $solicitud->estado->id,
+                        'nombre' => $solicitud->estado->nombre,
+                    ] : null,
+                    'tipo' => $solicitud->tipo ? [
+                        'id' => $solicitud->tipo->id,
+                        'nombre' => $solicitud->tipo->nombre,
+                    ] : null,
+                    'id' => $solicitud->id,
+                    'folio' => $solicitud->folio,
+                    'descripcionUser' => $solicitud->descripcionUser,
+                    'idTipo' => $solicitud->idTipo,
+                    'idEstado' => $solicitud->idEstado,
+                    'respuesta' => $solicitud->respuesta ? true : false,
+                    'respuestaData' => $solicitud->respuesta,
+                    'created_format_at' => $solicitud->created_at->format('Y-m-d h:i A'),
+                    'updated_format_at' => $solicitud->updated_at->format('Y-m-d h:i A'),
+                ];
+            }),
+        ]);
 
         // return response()->json([
         //     "total" => $solicitudes->total(),
@@ -464,6 +512,25 @@ class SolicitudController extends Controller
 
         return response()->json([
             'message' => 'Solución confirmada y solicitud cerrada exitosamente.',
+        ], 200);
+    }
+
+    public function archivarSolicitud(string $id)
+    {
+        $solicitud = Solicitud::findOrFail($id);
+
+        if ($solicitud->idEstado != 7) {
+            return response()->json([
+                'message' => 'La solicitud debe estar confirmada por el Jefe de Departamento quien creo la solicitud antes de poder ser archivada.',
+            ], 400);
+        }
+        $solicitud->update([
+            'idEstado' => 8,
+            'fecha_archivado' => now()
+        ]);
+
+        return response()->json([
+            'message' => 'Solicitud archivada exitosamente.',
         ], 200);
     }
 }
