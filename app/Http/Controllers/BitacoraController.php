@@ -29,16 +29,48 @@ class BitacoraController extends Controller
             }
         ])
             ->when($search, function ($query) use ($search) {
-                $query->whereHas("solicitud", function ($q) use ($search) {
-                    $q->where("folio", "like", "%{$search}%");
+
+                // AGRUPACIÓN: Todo el buscador va entre paréntesis
+                $query->where(function ($subQuery) use ($search) {
+
+                    // 1. Buscar por Descripción de la Falla (Texto libre)
+                    $subQuery->where('descFalla', 'like', "%{$search}%");
+
+                    $subQuery->orWhereHas('solicitud.user.departamento', function ($deptoQuery) use ($search) {
+                        $deptoQuery->where('abreviatura', 'like', "%{$search}%");
+                    });
+
+                    if (str_contains($search, '/')) {
+                        $partes = explode('/', $search);
+                        $abrev = $partes[0];
+                        $numero = (int) $partes[1];
+
+                        $subQuery->orWhereHas('solicitud', function ($solicitudQuery) use ($numero, $abrev) {
+                            $solicitudQuery->where('folio', $numero)
+                                ->whereHas('user.departamento', function ($deptoQuery) use ($abrev) {
+                                    $deptoQuery->where('abreviatura', 'like', "%{$abrev}%");
+                                });
+                        });
+                    } 
+                    // 3. Si el texto es solo numérico ("001", "15")
+                    elseif (is_numeric($search)) {
+                        $numero = (int) $search;
+                        
+                        // Buscar por el ID de la bitácora...
+                        $subQuery->orWhere('id', $numero)
+                        // ... O buscar por el número de folio simple en la Solicitud
+                                 ->orWhereHas('solicitud', function ($solicitudQuery) use ($numero) {
+                                     $solicitudQuery->where('folio', $numero);
+                                 });
+                    }
                 });
             })
             ->orderByDesc("id")
             ->paginate($perPage);
 
-        if ($bitacoras->isEmpty()) {
-            return response()->json(['message' => 'No hay bitacoras'], 404);
-        }
+        // if ($bitacoras->isEmpty()) {
+        //     return response()->json(['message' => 'No hay bitacoras'], 404);
+        // }
         return response()->json($bitacoras, 200);
     }
 

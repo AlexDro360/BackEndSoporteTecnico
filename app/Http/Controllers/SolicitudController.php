@@ -24,13 +24,65 @@ class SolicitudController extends Controller
         $search = $request->get('search');
         $estatus = $request->input('filtroEstatus', 0);
         $perPage = $request->input('perPage', 10);
+        $inProcess = filter_var($request->input('inProcess', false), FILTER_VALIDATE_BOOLEAN);
+        $coordination = (int) $request->input('coordination', 0);
 
-        $solicitudes = Solicitud::with(['user.departamento', 'respuesta'])
+        $solicitudes = Solicitud::with(['user.departamento', 'respuesta', 'estado', 'tipo'])
             ->when($search, function ($query) use ($search) {
-                $query->where('folio', 'like', "%{$search}%");
+                $query->where(function ($subQuery) use ($search) {
+
+                    $subQuery->whereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', "%{$search}%")
+                            ->orWhere('surnameP', 'like', "%{$search}%")
+                            ->orWhere('surnameM', 'like', "%{$search}%")
+                            ->orWhereHas('departamento', function ($deptoQuery) use ($search) {
+                                $deptoQuery->where('nombre', 'like', "%{$search}%")
+                                    ->orWhere('abreviatura', 'like', "%{$search}%");
+                            });
+                    })
+
+                        ->orWhereHas('estado', function ($estadoQuery) use ($search) {
+                            $estadoQuery->where('nombre', 'like', "%{$search}%");
+                        })
+
+                        ->orWhereHas('tipo', function ($tipoQuery) use ($search) {
+                            $tipoQuery->where('nombre', 'like', "%{$search}%");
+                        });
+
+                    if (str_contains($search, '/')) {
+                        // Si el usuario escribió el formato completo
+                        $partes = explode('/', $search);
+                        $abrev = $partes[0];          // Ejemplo: "PPP"
+                        $numero = (int) $partes[1];   // Transforma "001" o "01" en 1
+
+                        $subQuery->orWhere(function ($folioQuery) use ($numero, $abrev) {
+                            $folioQuery->where('folio', $numero)
+                                ->whereHas('user.departamento', function ($deptoQuery) use ($abrev) {
+                                    $deptoQuery->where('abreviatura', 'like', "%{$abrev}%");
+                                });
+                        });
+                    } elseif (is_numeric($search)) {
+                        // Si el usuario escribió solo números (ej. "001" o "1")
+                        $numero = (int) $search;
+                        $subQuery->orWhere('folio', $numero);
+                    }
+                });
             })
             ->when($estatus > 0, function ($query) use ($estatus) {
                 $query->where('idEstado', $estatus);
+            })
+            ->when($inProcess, function ($query) {
+                $query->whereIn('idEstado', [1, 3, 4, 5]);
+            })
+            // NUEVO BLOQUE: Filtro por Coordinación (Redes vs Mantenimiento)
+            ->when($coordination > 0, function ($query) use ($coordination) {
+                if ($coordination === 1) {
+                    // Si es 1, SOLO mostramos las de tipo 2
+                    $query->where('idTipo', 2);
+                } elseif ($coordination === 3) {
+                    // Si es 3, mostramos TODAS EXCEPTO las de tipo 2
+                    $query->where('idTipo', '!=', 2);
+                }
             })
             ->orderByDesc('id')
             ->paginate($perPage);
@@ -75,9 +127,35 @@ class SolicitudController extends Controller
         $search = $request->get('search');
         $perPage = $request->input('perPage', 10);
 
-        $solicitudes = Solicitud::with(['user.departamento', 'respuesta', 'estado'])
+        $solicitudes = Solicitud::with(['user.departamento', 'respuesta', 'estado', 'tipo'])
             ->when($search, function ($query) use ($search) {
-                $query->where('folio', 'like', "%{$search}%");
+                $query->where(function ($subQuery) use ($search) {
+
+                    // A) Buscar por Departamento (nombre o abreviatura)
+                    $subQuery->whereHas('user.departamento', function ($deptoQuery) use ($search) {
+                        $deptoQuery->where('nombre', 'like', "%{$search}%")
+                            ->orWhere('abreviatura', 'like', "%{$search}%");
+                    });
+
+                    // B) Interceptar y decodificar el Folio ("PPP/001" o "001")
+                    if (str_contains($search, '/')) {
+                        // Si escribe el formato completo (Ej. "PPP/001")
+                        $partes = explode('/', $search);
+                        $abrev = $partes[0];
+                        $numero = (int) $partes[1];
+
+                        $subQuery->orWhere(function ($folioQuery) use ($numero, $abrev) {
+                            $folioQuery->where('folio', $numero)
+                                ->whereHas('user.departamento', function ($deptoQuery) use ($abrev) {
+                                    $deptoQuery->where('abreviatura', 'like', "%{$abrev}%");
+                                });
+                        });
+                    } elseif (is_numeric($search)) {
+                        // Si escribe solo números (Ej. "001" o "1")
+                        $numero = (int) $search;
+                        $subQuery->orWhere('folio', $numero);
+                    }
+                });
             })
             ->whereIn('idEstado', [7, 8])
             ->orderByDesc('id')
@@ -165,10 +243,47 @@ class SolicitudController extends Controller
 
         $perPage = $request->input('perPage', 10);
 
-        $solicitudes = Solicitud::with('user', 'respuesta', 'estado', 'tipo')
+        $solicitudes = Solicitud::with(['user.departamento', 'respuesta', 'estado', 'tipo'])
             ->where('idUser', $id)
-            ->when($search, function ($query, $search) {
-                $query->where('folio', 'like', "%{$search}%");
+            ->when($search, function ($query) use ($search) {
+
+                // AGRUPACIÓN CRÍTICA: Todo el buscador va entre paréntesis
+                // SQL resultante: WHERE idUser = ? AND (estado LIKE ? OR tipo LIKE ? OR folio = ?)
+                $query->where(function ($subQuery) use ($search) {
+
+                    // A) Buscar por nombre del Estado
+                    $subQuery->whereHas('estado', function ($estadoQuery) use ($search) {
+                        $estadoQuery->where('nombre', 'like', "%{$search}%");
+                    })
+
+                        // B) Buscar por nombre del Tipo de problema
+                        ->orWhereHas('tipo', function ($tipoQuery) use ($search) {
+                            $tipoQuery->where('nombre', 'like', "%{$search}%");
+                        })
+
+                        // C) Buscar por Departamento (nombre o abreviatura)
+                        ->orWhereHas('user.departamento', function ($deptoQuery) use ($search) {
+                            $deptoQuery->where('nombre', 'like', "%{$search}%")
+                                ->orWhere('abreviatura', 'like', "%{$search}%");
+                        });
+
+                    // D) MAGIA: Interceptar y decodificar el Folio ("PPP/001" o "001")
+                    if (str_contains($search, '/')) {
+                        $partes = explode('/', $search);
+                        $abrev = $partes[0];
+                        $numero = (int) $partes[1];
+
+                        $subQuery->orWhere(function ($folioQuery) use ($numero, $abrev) {
+                            $folioQuery->where('folio', $numero)
+                                ->whereHas('user.departamento', function ($deptoQuery) use ($abrev) {
+                                    $deptoQuery->where('abreviatura', 'like', "%{$abrev}%");
+                                });
+                        });
+                    } elseif (is_numeric($search)) {
+                        $numero = (int) $search;
+                        $subQuery->orWhere('folio', $numero);
+                    }
+                });
             })
             ->orderBy('id', 'desc')
             ->paginate($perPage);
@@ -253,8 +368,10 @@ class SolicitudController extends Controller
         $search = $request->get('search');
 
         $perPage = $request->input('perPage', 10);
+        $inProcess = filter_var($request->input('inProcess', false), FILTER_VALIDATE_BOOLEAN);
 
-        $solicitudes = Solicitud::with(['personalAtencion', 'user', 'respuesta', 'estado', 'tipo'])
+
+        $solicitudes = Solicitud::with(['personalAtencion', 'user.departamento', 'respuesta', 'estado', 'tipo'])
             ->whereHas('personalAtencion', function ($query) use ($id) {
                 $query->where('user_id', $id)
                     ->where('atencion_solicituds.estado', 1);
@@ -262,8 +379,53 @@ class SolicitudController extends Controller
             // ->whereHas('personalAtencion', function ($q) use ($id) {
             //     $q->where('user_id', $id);
             // })
-            ->when($search, function ($query, $search) {
-                $query->where('folio', 'like', "%{$search}%");
+            ->when($search, function ($query) use ($search) {
+
+                // AGRUPACIÓN CRÍTICA: Todo el buscador va entre paréntesis
+                // SQL: WHERE personalAtencion = ID AND (usuario LIKE x OR folio = y OR ...)
+                $query->where(function ($subQuery) use ($search) {
+
+                    // A) Buscar por datos del Solicitante (Usuario) y su Departamento
+                    $subQuery->whereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('name', 'like', "%{$search}%")
+                            ->orWhere('surnameP', 'like', "%{$search}%")
+                            ->orWhere('surnameM', 'like', "%{$search}%")
+                            ->orWhereHas('departamento', function ($deptoQuery) use ($search) {
+                                $deptoQuery->where('nombre', 'like', "%{$search}%")
+                                    ->orWhere('abreviatura', 'like', "%{$search}%");
+                            });
+                    })
+
+                        // B) Buscar por nombre del Estado
+                        ->orWhereHas('estado', function ($estadoQuery) use ($search) {
+                            $estadoQuery->where('nombre', 'like', "%{$search}%");
+                        })
+
+                        // C) Buscar por nombre del Tipo de problema
+                        ->orWhereHas('tipo', function ($tipoQuery) use ($search) {
+                            $tipoQuery->where('nombre', 'like', "%{$search}%");
+                        });
+
+                    // D) MAGIA: Interceptar y decodificar el Folio ("PPP/001" o "001")
+                    if (str_contains($search, '/')) {
+                        $partes = explode('/', $search);
+                        $abrev = $partes[0];
+                        $numero = (int) $partes[1];
+
+                        $subQuery->orWhere(function ($folioQuery) use ($numero, $abrev) {
+                            $folioQuery->where('folio', $numero)
+                                ->whereHas('user.departamento', function ($deptoQuery) use ($abrev) {
+                                    $deptoQuery->where('abreviatura', 'like', "%{$abrev}%");
+                                });
+                        });
+                    } elseif (is_numeric($search)) {
+                        $numero = (int) $search;
+                        $subQuery->orWhere('folio', $numero);
+                    }
+                });
+            })
+            ->when($inProcess, function ($query) {
+                $query->whereIn('idEstado', [1, 3, 4, 5]);
             })
             ->orderBy('id', 'desc')
             ->paginate($perPage);

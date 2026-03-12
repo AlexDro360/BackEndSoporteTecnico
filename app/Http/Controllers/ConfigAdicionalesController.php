@@ -17,7 +17,14 @@ class ConfigAdicionalesController extends Controller
 
         $perPage = $request->input('perPage', 10);
 
-        $folios = Departamento::where("nombre", "like", "%" . $search . "%")->paginate($perPage);
+       $folios = Departamento::when($search, function ($query) use ($search) {
+            // Agrupamos la búsqueda en un bloque lógico (nombre OR abreviatura)
+            $query->where(function ($subQuery) use ($search) {
+                $subQuery->where("nombre", "like", "%{$search}%")
+                         ->orWhere("abreviatura", "like", "%{$search}%");
+            });
+        })
+        ->paginate($perPage);
 
         return response()->json($folios);
     }

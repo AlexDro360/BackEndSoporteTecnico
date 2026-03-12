@@ -24,8 +24,20 @@ class UserAccessController extends Controller
         // $nombreDepartamento = $users->departamento ? $users->departamento->nombre : 'Sin departamento';
         //$users = User::with('departamento')->where("name", "like", "%" . $search . "%")->orderBy("id", "desc")->paginate(25);
 
-        $users = User::where("name", "like", "%" . $search . "%")->orWhere("surnameP", "like", "%" . $search . "%")
-        ->orWhere("surnameM", "like", "%" . $search . "%")->orderBy("id", "desc")->paginate($perPage);
+        $users = User::with('departamento')
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('surnameP', 'like', "%{$search}%")
+                  ->orWhere('surnameM', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhereHas('departamento', function ($d) use ($search) {
+                      $d->where('nombre', 'like', "%{$search}%");
+                  });
+            });
+        })
+        ->orderBy('id', 'desc')
+        ->paginate($perPage);
 
         return response()->json([
             "total" => $users->total(),
